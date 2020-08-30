@@ -61,7 +61,7 @@ public class CustomerService {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Customer customer = session.find(Customer.class, id);
+            Customer customer = findById(id);
             if(Objects.nonNull(customer)) {
                 session.delete(customer);
             }
