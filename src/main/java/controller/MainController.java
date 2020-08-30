@@ -25,6 +25,14 @@ public class MainController {
         states.push(new ProductMenuState(new ProductController(states)));
     }
 
+    public void toCustomerMenu() {
+
+    }
+
+    public void toOrderMenu() {
+
+    }
+
     public void exitProgram() {
         states.pop();
     }

@@ -2,6 +2,7 @@ package controller;
 
 import service.ProductService;
 import view.MenuState;
+import view.ProductBrowserMenuState;
 
 import java.util.Deque;
 
@@ -14,6 +15,9 @@ public class ProductController {
         this.productService = new ProductService();
     }
 
+    public void toProductBrowserMenu() {
+        states.push(new ProductBrowserMenuState(this));
+    }
 
     public void returnToPreviousMenu() {
         states.pop();
