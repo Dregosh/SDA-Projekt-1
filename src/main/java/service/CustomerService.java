@@ -9,7 +9,9 @@ import util.HibernateUtil;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.List;
 import java.util.Objects;
 
 public class CustomerService {
@@ -43,6 +45,24 @@ public class CustomerService {
         return customer;
     }
 
+    public List<Customer> findByFullName(String lastName, String firstName) {
+        List<Customer> customers = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            Root<Customer> root = criteriaQuery.from(Customer.class);
+            Predicate[] predicates = new Predicate[2];
+            predicates[0] = criteriaBuilder.like(root.get("lastName"), lastName + "%");
+            predicates[1] = criteriaBuilder.like(root.get("firstName"), firstName + "%");
+            criteriaQuery.select(root).where(predicates);
+            Query<Customer> query = session.createQuery(criteriaQuery);
+            customers = query.getResultList();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        }
+        return customers;
+    }
+
     public void update(Customer customer) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -72,6 +92,11 @@ public class CustomerService {
             }
             e.printStackTrace();
         }
+    }
+
+    private CriteriaQuery<Customer> initializeCriteriaQuery(Session session) {
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        return criteriaBuilder.createQuery(Customer.class);
     }
 
     public void initialCustomers() {
