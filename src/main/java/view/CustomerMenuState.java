@@ -1,6 +1,7 @@
 package view;
 
 import controller.CustomerController;
+import model.Customer;
 
 import java.util.Scanner;
 
@@ -40,7 +41,23 @@ public class CustomerMenuState extends MenuState {
     }
 
     private void addNewCustomerOption(){
-        customerController.addNewCustomer();
+        Customer customer = new Customer();
+        in.nextLine();
+        System.out.print("Enter the last name: ");
+        customer.setLastName(in.nextLine());
+        System.out.println();
+        System.out.print("Enter the first name: ");
+        customer.setFirstName(in.nextLine());
+        System.out.println();
+        System.out.print("Enter the name of the street, the building number and the apartment number: ");
+        customer.setAddressStreet(in.nextLine());
+        System.out.println();
+        System.out.print("Enter the postal code: " );
+        customer.setAddressPostalCode(in.nextLine());
+        System.out.println();
+        System.out.print("Enter the name of the city : ");
+        customer.setAddressCity(in.nextLine());
+        customerController.addNewCustomer(customer);
     }
 
     private void updateExistingCustomerOption() {

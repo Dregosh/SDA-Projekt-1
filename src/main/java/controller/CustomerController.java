@@ -1,11 +1,11 @@
 package controller;
 
+import model.Customer;
 import service.CustomerService;
 import view.CustomerBrowserMenuState;
 import view.MenuState;
 
 import java.util.Deque;
-import java.util.Scanner;
 
 public class CustomerController {
     private Deque<MenuState> states;
@@ -16,8 +16,8 @@ public class CustomerController {
         this.customerService = new CustomerService();
     }
 
-    public void addNewCustomer(){
-
+    public void addNewCustomer(Customer customer){
+        customerService.add(customer);
     }
 
     public void updateExistingCustomer() {
