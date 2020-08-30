@@ -10,18 +10,16 @@ import util.HibernateUtil;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.Objects;
 
 public class CustomerService {
 
     public void add(Customer customer) {
         Transaction transaction = null;
-
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
             transaction = session.beginTransaction();
             session.save(customer);
             transaction.commit();
-
         } catch (HibernateException e) {
             if(transaction != null) {
                 transaction.rollback();
@@ -31,19 +29,14 @@ public class CustomerService {
     }
 
     public Customer findById(Long id) {
-
         Customer customer = null;
-
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("id"),id));
-
             Query<Customer> query = session.createQuery(criteriaQuery);
             customer = query.getSingleResult();
-
         } catch (HibernateException e) {
             e.printStackTrace();
         }
@@ -54,30 +47,31 @@ public class CustomerService {
 
     }
 
-    public void delete() {
-
+    public void delete(Long id) {
+        Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
-            Transaction transaction = session.beginTransaction();
-
+            transaction = session.beginTransaction();
+            Customer customer = session.find(Customer.class, id);
+            if(Objects.nonNull(customer)) {
+                session.delete(customer);
+            }
             transaction.commit();
-
-        } catch (Exception e) {
+        } catch (HibernateException e) {
+            if(transaction != null) {
+                transaction.rollback();
+            }
             e.printStackTrace();
         }
     }
 
     public void initialCustomers() {
-        CustomerService customerService = new CustomerService();
-
         Customer customer = new Customer();
         customer.setLastName("Kowalski");
         customer.setFirstName("Jan");
         customer.setAddressStreet("Ujazdowskie");
         customer.setAddressPostalCode("00-500");
         customer.setAddressCity("Warszawa");
-
-        customerService.add(customer);
+        add(customer);
 
         Customer customer1 = new Customer();
         customer.setLastName("Burak");
@@ -85,9 +79,7 @@ public class CustomerService {
         customer.setAddressStreet("Puławska");
         customer.setAddressPostalCode("00-100");
         customer.setAddressCity("Kraków");
-
-        customerService.add(customer1);
-
+        add(customer1);
     }
 
 }
