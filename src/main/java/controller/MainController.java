@@ -1,5 +1,6 @@
 package controller;
 
+import view.CustomerMenuState;
 import view.MainMenuState;
 import view.MenuState;
 import view.ProductMenuState;
@@ -26,7 +27,7 @@ public class MainController {
     }
 
     public void toCustomerMenu() {
-
+        states.push(new CustomerMenuState(new CustomerController(states)));
     }
 
     public void toOrderMenu() {

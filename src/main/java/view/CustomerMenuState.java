@@ -46,6 +46,6 @@ public class CustomerMenuState extends MenuState {
     }
 
     private void returnToPreviousMenuOption() {
-
+        customerController.returnToPreviousMenu();
     }
 }
