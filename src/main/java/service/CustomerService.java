@@ -52,8 +52,8 @@ public class CustomerService {
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             Predicate[] predicates = new Predicate[2];
-            predicates[0] = criteriaBuilder.like(root.get("lastName"), lastName + "%");
-            predicates[1] = criteriaBuilder.like(root.get("firstName"), firstName + "%");
+            predicates[0] = criteriaBuilder.like(root.get("lastName"), "%" + lastName + "%");
+            predicates[1] = criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%");
             criteriaQuery.select(root).where(predicates);
             Query<Customer> query = session.createQuery(criteriaQuery);
             customers = query.getResultList();
