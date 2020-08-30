@@ -94,11 +94,6 @@ public class CustomerService {
         }
     }
 
-    private CriteriaQuery<Customer> initializeCriteriaQuery(Session session) {
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        return criteriaBuilder.createQuery(Customer.class);
-    }
-
     public void initialCustomers() {
         Customer customer = new Customer();
         customer.setLastName("Kowalski");
@@ -109,11 +104,11 @@ public class CustomerService {
         add(customer);
 
         Customer customer1 = new Customer();
-        customer.setLastName("Burak");
-        customer.setFirstName("Stefan");
-        customer.setAddressStreet("Puławska");
-        customer.setAddressPostalCode("00-100");
-        customer.setAddressCity("Kraków");
+        customer1.setLastName("Burak");
+        customer1.setFirstName("Stefan");
+        customer1.setAddressStreet("Puławska");
+        customer1.setAddressPostalCode("00-100");
+        customer1.setAddressCity("Kraków");
         add(customer1);
     }
 

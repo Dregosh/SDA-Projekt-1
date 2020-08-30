@@ -10,7 +10,8 @@ import java.util.List;
 public class App {
     public static void main(String[] args) {
         CustomerService customerService = new CustomerService();
-        List<Customer> customers = customerService.findByFullName("Kowal", null);
+        //customerService.initialCustomers();
+        List<Customer> customers = customerService.findByFullName("", "");
         System.out.println("Test");
     }
 }
