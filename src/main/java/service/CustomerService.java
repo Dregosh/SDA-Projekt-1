@@ -70,4 +70,27 @@ public class CustomerService {
 
     }
 
+    public void initialCustomers() {
+        CustomerService customerService = new CustomerService();
+
+        Customer customer = new Customer();
+        customer.setLastName("Kowalski");
+        customer.setFirstName("Jan");
+        customer.setAddressStreet("Ujazdowskie");
+        customer.setAddressPostalCode("00-500");
+        customer.setAddressCity("Warszawa");
+
+        customerService.add(customer);
+
+        Customer customer1 = new Customer();
+        customer.setLastName("Burak");
+        customer.setFirstName("Stefan");
+        customer.setAddressStreet("Puławska");
+        customer.setAddressPostalCode("00-100");
+        customer.setAddressCity("Kraków");
+
+        customerService.add(customer1);
+
+    }
+
 }
