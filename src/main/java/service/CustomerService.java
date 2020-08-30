@@ -32,30 +32,23 @@ public class CustomerService {
 
     public Customer findById(Long id) {
 
-        Transaction transaction = null;
-
-        Query<Customer> query = null;
+        Customer customer = null;
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            transaction = session.beginTransaction();
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("id"),id));
 
-            query = session.createQuery(criteriaQuery);
-
-            transaction.commit();
+            Query<Customer> query = session.createQuery(criteriaQuery);
+            customer = query.getSingleResult();
 
         } catch (HibernateException e) {
-            if(transaction != null) {
-                transaction.rollback();
-            }
             e.printStackTrace();
         }
 
-        return query.getSingleResult();
+        return customer;
 
     }
 
