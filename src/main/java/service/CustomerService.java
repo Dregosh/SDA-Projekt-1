@@ -47,9 +47,7 @@ public class CustomerService {
         } catch (HibernateException e) {
             e.printStackTrace();
         }
-
         return customer;
-
     }
 
     public void update() {
@@ -67,7 +65,6 @@ public class CustomerService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void initialCustomers() {
