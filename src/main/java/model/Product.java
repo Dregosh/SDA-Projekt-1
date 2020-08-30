@@ -1,26 +1,41 @@
 package model;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "products")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence-generator")
+    @SequenceGenerator(name = "sequence-generator", sequenceName = "product_sequence",
+                       allocationSize = 1)
     private Long id;
 
     @Column
+    @NotNull
     private String name;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private ProductType type;
 
     @Column
     private Double price;
 
     @Column
+    @NotNull
     private int amount;
 
     public Product() {
+    }
+
+    public Product(String name, ProductType type, Double price, int amount) {
+        this();
+        this.setName(name);
+        this.setType(type);
+        this.setPrice(price);
+        this.setAmount(amount);
     }
 
     public Long getId() {
@@ -61,5 +76,16 @@ public class Product {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", type=" + type +
+               ", price=" + price +
+               ", amount=" + amount +
+               '}';
     }
 }

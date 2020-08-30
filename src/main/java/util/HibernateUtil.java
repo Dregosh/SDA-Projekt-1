@@ -13,16 +13,9 @@ public class HibernateUtil {
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             try {
-                //Create registry
                 registry = new StandardServiceRegistryBuilder().configure().build();
-
-                //Create Metadata sources
                 MetadataSources sources = new MetadataSources(registry);
-
-                //Create Metadata
                 Metadata metadata = sources.buildMetadata();
-
-                //Create SessionFactory
                 sessionFactory = metadata.buildSessionFactory();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -32,11 +25,5 @@ public class HibernateUtil {
             }
         }
         return sessionFactory;
-    }
-
-    public static void shutdown() {
-        if (registry != null) {
-            StandardServiceRegistryBuilder.destroy(registry);
-        }
     }
 }

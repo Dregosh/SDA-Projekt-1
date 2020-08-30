@@ -26,6 +26,4 @@ public class MainMenuState extends MenuState {
                 break;
         }
     }
-
-
 }
