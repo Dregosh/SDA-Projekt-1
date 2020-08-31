@@ -3,8 +3,6 @@ package view;
 import controller.CustomerController;
 import model.Customer;
 
-import java.util.Scanner;
-
 public class CustomerMenuState extends MenuState {
     private CustomerController customerController;
 
