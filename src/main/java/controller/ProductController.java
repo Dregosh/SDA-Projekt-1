@@ -16,6 +16,14 @@ public class ProductController {
         this.productService = new ProductService();
     }
 
+    public void addNewProductToDB(Product product) {
+        productService.addProduct(product);
+    }
+
+    public void updateProductInDB(Product product) {
+        productService.updateProduct(product);
+    }
+
     public void toProductBrowserMenu() {
         states.push(new ProductBrowserMenuState(this));
     }
@@ -26,9 +34,5 @@ public class ProductController {
 
     public void returnToPreviousMenu() {
         states.pop();
-    }
-
-    public void addNewProductToDB(Product product) {
-        productService.addProduct(product);
     }
 }

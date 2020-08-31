@@ -16,7 +16,7 @@ public class ProductBrowserMenuState extends ProductMenuState {
         System.out.println("(3) Show all products");
         System.out.println("(0) Return to previous menu");
         System.out.print("> ");
-        int input = (int) requestNumberInput();
+        int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
         switch (input) {
             case 1:
                 findProductByIdOption();

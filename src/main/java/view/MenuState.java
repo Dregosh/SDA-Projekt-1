@@ -1,36 +1,64 @@
 package view;
 
-import java.util.InputMismatchException;
+import model.Product;
+
+import java.util.List;
 import java.util.Scanner;
 
 public abstract class MenuState {
     protected final Scanner in = new Scanner(System.in);
+    protected static final boolean BLANK_INPUT_ALLOWED = true;
+    protected static final boolean BLANK_INPUT_NOT_ALLOWED = false;
+    protected static final int BLANK_INPUT_MARKER = -1;
+    protected static final String PRODUCT_INFO_FMT =
+            "(#%02d) %-20s| %-12s| %-9.2f| %-2d pc(s)\n";
 
     abstract public void show();
 
-    public double requestNumberInput() {
+    protected double requestNumberInput(boolean allowBlank) {
         while (true) {
             try {
-                double input = in.nextDouble();
-                in.nextLine();
-                return input;
-            } catch (InputMismatchException e) {
+                String rawInput = in.nextLine();
+                if (rawInput.isBlank() && allowBlank) {
+                    return BLANK_INPUT_MARKER;
+                }
+                return Double.parseDouble(rawInput);
+            } catch (NumberFormatException e) {
                 System.out.println("Input must be a number");
-                in.nextLine();
                 System.out.print("> ");
             }
         }
     }
 
-    public void reportNotImplented() {
+    protected void showFormattedProduct(Product product) {
+        System.out.printf(PRODUCT_INFO_FMT, product.getId(), product.getName(),
+                          product.getType(), product.getPrice(), product.getAmount());
+    }
+
+    protected void showFormattedProducts(List<Product> products) {
+        if (products.size() > 0) {
+            for (Product p : products) {
+                showFormattedProduct(p);
+            }
+        } else {
+            System.out.println("<found nothing>");
+        }
+    }
+
+    protected void reportNotImplented() {
         System.out.println("Option not implemented yet.");
     }
 
-    public void reportOperationSuccessful() {
+    protected void reportOperationSuccessful() {
         System.out.println("Operation successful");
     }
 
-    public void reportOperationCancelled() {
+    protected void reportOperationCancelled() {
         System.out.println("Operation cancelled");
+    }
+
+    protected boolean userConfirms() {
+        System.out.print("Press 'Y' to confirm: ");
+        return "Y".equals(in.nextLine().toUpperCase());
     }
 }

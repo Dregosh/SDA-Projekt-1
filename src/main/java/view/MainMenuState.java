@@ -17,7 +17,7 @@ public class MainMenuState extends MenuState {
         System.out.println("(3) Order Menu...");
         System.out.println("(0) Exit program");
         System.out.print("> ");
-        int input = (int) requestNumberInput();
+        int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
         switch (input) {
             case 1:
                 toProductMenuOption();
