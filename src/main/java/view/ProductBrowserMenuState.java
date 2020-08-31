@@ -16,7 +16,7 @@ public class ProductBrowserMenuState extends ProductMenuState {
         System.out.println("(3) Show all products");
         System.out.println("(0) Return to previous menu");
         System.out.print("> ");
-        int input = in.nextInt();
+        int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
         switch (input) {
             case 1:
                 findProductByIdOption();
@@ -28,20 +28,22 @@ public class ProductBrowserMenuState extends ProductMenuState {
                 showAllProductsOption();
                 break;
             case 0:
-            default:
                 returnToPreviousMenuOption();
+                break;
+            default:
+                System.out.println("Invalid choice");
         }
     }
 
     private void findProductByIdOption() {
-        reportNotImplentedInfo();
+        reportNotImplented();
     }
 
     private void findProductByNameOption() {
-        reportNotImplentedInfo();
+        reportNotImplented();
     }
 
     private void showAllProductsOption() {
-        reportNotImplentedInfo();
+        reportNotImplented();
     }
 }
