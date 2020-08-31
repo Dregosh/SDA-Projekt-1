@@ -17,7 +17,7 @@ public class CustomerBrowserMenuState extends CustomerMenuState {
         System.out.println("(3) Show all customers");
         System.out.println("(0) Return to previous menu");
         System.out.print("> ");
-        int input = in.nextInt();
+        int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
         switch (input) {
             case 1:
                 findCustomerByIdOption();
@@ -29,8 +29,10 @@ public class CustomerBrowserMenuState extends CustomerMenuState {
                 showAllCustomersOption();
                 break;
             case 0:
-            default:
                 returnToPreviousMenuOption();
+                break;
+            default:
+                System.out.println("Invalid choice");
         }
     }
 

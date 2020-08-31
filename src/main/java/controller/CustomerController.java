@@ -32,6 +32,10 @@ public class CustomerController {
         states.push(new CustomerBrowserMenuState(this));
     }
 
+    public Customer findCustomerById(long id) {
+        return customerService.findById(id);
+    }
+
     public void returnToPreviousMenu() {
         states.pop();
     }

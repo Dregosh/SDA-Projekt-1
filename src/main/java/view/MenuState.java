@@ -1,5 +1,6 @@
 package view;
 
+import model.Customer;
 import model.Product;
 
 import java.util.List;
@@ -12,6 +13,8 @@ public abstract class MenuState {
     protected static final int BLANK_INPUT_MARKER = -1;
     protected static final String PRODUCT_INFO_FMT =
             "(#%02d) %-20s| %-12s| %-9.2f| %-2d pc(s)\n";
+    protected static final String CUSTOMER_INFO_FMT =
+            "(#%02d) %-16s | %-24s | %-30s | %-9s | %-16s\n";
 
     abstract public void show();
 
@@ -33,6 +36,11 @@ public abstract class MenuState {
     protected void showFormattedProduct(Product product) {
         System.out.printf(PRODUCT_INFO_FMT, product.getId(), product.getName(),
                           product.getType(), product.getPrice(), product.getAmount());
+    }
+
+    protected void showFormattedCustomer(Customer customer) {
+        System.out.printf(CUSTOMER_INFO_FMT, customer.getId(), customer.getLastName(), customer.getFirstName(),
+                customer.getAddressStreet(), customer.getAddressPostalCode(), customer.getAddressCity());
     }
 
     protected void showFormattedProducts(List<Product> products) {

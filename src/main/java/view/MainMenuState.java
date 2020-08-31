@@ -29,7 +29,6 @@ public class MainMenuState extends MenuState {
                 toOrderMenuOption();
                 break;
             case 0:
-            default:
                 exitProgramOption();
                 break;
             default:
@@ -47,7 +46,7 @@ public class MainMenuState extends MenuState {
 
     private void toOrderMenuOption() {
         //mainController.toOrderMenu();
-        reportNotImplentedInfo();
+        reportNotImplented();
     }
 
     private void exitProgramOption() {
