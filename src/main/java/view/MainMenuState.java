@@ -17,7 +17,7 @@ public class MainMenuState extends MenuState {
         System.out.println("(3) Order Menu...");
         System.out.println("(0) Exit program");
         System.out.print("> ");
-        int input = in.nextInt();
+        int input = (int) requestNumberInput();
         switch (input) {
             case 1:
                 toProductMenuOption();
@@ -29,9 +29,10 @@ public class MainMenuState extends MenuState {
                 toOrderMenuOption();
                 break;
             case 0:
-            default:
                 exitProgramOption();
                 break;
+            default:
+                System.out.println("Invalid choice");
         }
     }
 
@@ -41,12 +42,12 @@ public class MainMenuState extends MenuState {
 
     private void toCustomerMenuOption() {
         //mainController.toCustomerMenu();
-        reportNotImplentedInfo();
+        reportNotImplented();
     }
 
     private void toOrderMenuOption() {
         //mainController.toOrderMenu();
-        reportNotImplentedInfo();
+        reportNotImplented();
     }
 
     private void exitProgramOption() {

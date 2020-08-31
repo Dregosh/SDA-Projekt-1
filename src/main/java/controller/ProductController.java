@@ -1,5 +1,6 @@
 package controller;
 
+import model.Product;
 import service.ProductService;
 import view.MenuState;
 import view.ProductBrowserMenuState;
@@ -19,7 +20,15 @@ public class ProductController {
         states.push(new ProductBrowserMenuState(this));
     }
 
+    public Product findProductById(long id) {
+        return productService.findProductById(id);
+    }
+
     public void returnToPreviousMenu() {
         states.pop();
+    }
+
+    public void addNewProductToDB(Product product) {
+        productService.addProduct(product);
     }
 }
