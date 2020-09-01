@@ -3,6 +3,7 @@ package view;
 import model.Product;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public abstract class MenuState {
@@ -31,8 +32,12 @@ public abstract class MenuState {
     }
 
     protected void showFormattedProduct(Product product) {
-        System.out.printf(PRODUCT_INFO_FMT, product.getId(), product.getName(),
-                          product.getType(), product.getPrice(), product.getAmount());
+        if (Objects.nonNull(product)) {
+            System.out.printf(PRODUCT_INFO_FMT, product.getId(), product.getName(),
+                              product.getType(), product.getPrice(), product.getAmount());
+        } else {
+            reportFoundNothing();
+        }
     }
 
     protected void showFormattedProducts(List<Product> products) {
@@ -41,7 +46,7 @@ public abstract class MenuState {
                 showFormattedProduct(p);
             }
         } else {
-            System.out.println("<found nothing>");
+            reportFoundNothing();
         }
     }
 
@@ -55,6 +60,10 @@ public abstract class MenuState {
 
     protected void reportOperationCancelled() {
         System.out.println("Operation cancelled");
+    }
+
+    protected void reportFoundNothing() {
+        System.out.println("<found nothing>");
     }
 
     protected boolean userConfirms() {

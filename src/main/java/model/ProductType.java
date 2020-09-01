@@ -1,5 +1,5 @@
 package model;
 
 public enum ProductType {
-    DISPLAY, CPU, RAM, DISC_DRIVE, ACCESSORY
+    ACCESSORY, CPU, DISC_DRIVE, DISPLAY, GPU, RAM
 }

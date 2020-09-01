@@ -7,7 +7,7 @@ import model.ProductType;
 import java.util.Objects;
 
 public class ProductMenuState extends MenuState {
-    private final ProductController productController;
+    protected final ProductController productController;
     protected static final boolean ZERO_ALLOWED = true;
     protected static final boolean ZERO_NOT_ALLOWED = false;
 
@@ -17,25 +17,25 @@ public class ProductMenuState extends MenuState {
 
     public void show() {
         System.out.println("\nPRODUCT MENU");
-        System.out.println("(1) Add new product to DataBase");
-        System.out.println("(2) Update existing product in DataBase");
-        System.out.println("(3) Remove product from DataBase");
-        System.out.println("(4) To Product Browser Menu...");
+        System.out.println("(1) Product Browser Menu...");
+        System.out.println("(2) Add new product to DataBase");
+        System.out.println("(3) Update existing product in DataBase");
+        System.out.println("(4) Remove product from DataBase");
         System.out.println("(0) Return to previous menu");
         System.out.print("> ");
         int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
         switch (input) {
             case 1:
-                addNewProductOption();
+                toProductBrowserMenuOption();
                 break;
             case 2:
-                updateExistingProductOption();
+                addNewProductOption();
                 break;
             case 3:
-                removeProductOption();
+                updateExistingProductOption();
                 break;
             case 4:
-                toProductBrowserMenuOption();
+                removeProductOption();
                 break;
             case 0:
                 returnToPreviousMenuOption();
@@ -43,6 +43,10 @@ public class ProductMenuState extends MenuState {
             default:
                 System.out.println("Invalid choice");
         }
+    }
+
+    private void toProductBrowserMenuOption() {
+        productController.toProductBrowserMenu();
     }
 
     private void addNewProductOption() {
@@ -101,11 +105,20 @@ public class ProductMenuState extends MenuState {
     }
 
     private void removeProductOption() {
-        reportNotImplented();
-    }
-
-    private void toProductBrowserMenuOption() {
-        productController.toProductBrowserMenu();
+        Product product = defineProductForContext();
+        if (Objects.isNull(product)) {
+            reportOperationCancelled();
+            return;
+        }
+        System.out.print("Product selected to delete: ");
+        showFormattedProduct(product);
+        System.out.print("Proceed with delete? ");
+        if (userConfirms()) {
+            productController.removeProductFromDB(product);
+            reportOperationSuccessful();
+        } else {
+            reportOperationCancelled();
+        }
     }
 
     protected void returnToPreviousMenuOption() {
@@ -119,14 +132,9 @@ public class ProductMenuState extends MenuState {
             input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
             if (input != 0) {
                 Product product = productController.findProductById(input);
-                if (Objects.isNull(product)) {
-                    System.out.println("Product not found");
-                } else {
-                    System.out.print("Found: ");
-                    showFormattedProduct(product);
-                    if (userConfirms()) {
-                        return product;
-                    }
+                showFormattedProduct(product);
+                if (userConfirms()) {
+                    return product;
                 }
             }
         } while (input != 0);
@@ -147,7 +155,7 @@ public class ProductMenuState extends MenuState {
         return productName;
     }
 
-    private int defineLegitProductTypeNumber(boolean allowZero) {
+    protected int defineLegitProductTypeNumber(boolean allowZero) {
         int prodTypeNo;
         boolean legitInput;
         do {
