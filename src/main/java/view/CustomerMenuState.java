@@ -3,6 +3,9 @@ package view;
 import controller.CustomerController;
 import model.Customer;
 
+import java.lang.reflect.Field;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 public class CustomerMenuState extends MenuState {
@@ -44,22 +47,20 @@ public class CustomerMenuState extends MenuState {
 
     private void addNewCustomerOption() {
         Customer customer = new Customer();
-        in.nextLine();
-        System.out.print("Enter the last name: ");
-        customer.setLastName(in.nextLine());
-        System.out.println();
-        System.out.print("Enter the first name: ");
-        customer.setFirstName(in.nextLine());
-        System.out.println();
-        System.out.print("Enter the name of the street, the building number and the apartment number: ");
-        customer.setAddressStreet(in.nextLine());
-        System.out.println();
-        System.out.print("Enter the postal code: ");
-        customer.setAddressPostalCode(in.nextLine());
-        System.out.println();
-        System.out.print("Enter the name of the city : ");
-        customer.setAddressCity(in.nextLine());
-        customerController.addNewCustomer(customer);
+        setCustomerFields(customer);
+        if (hasMoreThanOneNull(customer)) {
+            System.out.println("Invalid customer");
+            reportOperationFailed();
+            return;
+        }
+        showCustomerBeforeAdd(customer);
+        System.out.print("Save customer in the DataBase? ");
+        if (userConfirms()) {
+            customerController.addNewCustomer(customer);
+            reportOperationSuccessful();
+        } else {
+            reportOperationCancelled();
+        }
     }
 
     private void updateExistingCustomerOption() {
@@ -125,35 +126,51 @@ public class CustomerMenuState extends MenuState {
             System.out.println("(0) Finish");
             System.out.print("> ");
             input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
+            String attributeName;
             switch (input) {
                 case 1:
-                    String newLastName = defineAttribute(BLANK_INPUT_NOT_ALLOWED, "last name");
+                    attributeName = "last name";
+                    String newLastName = defineAttribute(BLANK_INPUT_NOT_ALLOWED, attributeName);
                     if (Objects.nonNull(newLastName)) {
                         modifiedCustomer.setLastName(newLastName);
+                    } else if (Objects.isNull(customer.getLastName())) {
+                        invalidValueWarning(attributeName);
                     }
                     break;
                 case 2:
-                    String newFirstName = defineAttribute(BLANK_INPUT_NOT_ALLOWED, "first name");
+                    attributeName = "first name";
+                    String newFirstName = defineAttribute(BLANK_INPUT_NOT_ALLOWED, attributeName);
                     if (Objects.nonNull(newFirstName)) {
                         modifiedCustomer.setFirstName(newFirstName);
+                    } else if (Objects.isNull(customer.getFirstName())) {
+                        invalidValueWarning(attributeName);
                     }
                     break;
                 case 3:
-                    String newAddressStreet = defineAttribute(BLANK_INPUT_NOT_ALLOWED, "street address");
+                    attributeName = "street address";
+                    String newAddressStreet = defineAttribute(BLANK_INPUT_NOT_ALLOWED, attributeName);
                     if (Objects.nonNull(newAddressStreet)) {
                         modifiedCustomer.setAddressStreet(newAddressStreet);
+                    } else if (Objects.isNull(customer.getAddressStreet())) {
+                        invalidValueWarning(attributeName);
                     }
                     break;
                 case 4:
-                    String newAddressPostalCode = defineAttribute(BLANK_INPUT_NOT_ALLOWED, "postal code");
+                    attributeName = "postal code";
+                    String newAddressPostalCode = defineAttribute(BLANK_INPUT_NOT_ALLOWED, attributeName);
                     if (Objects.nonNull(newAddressPostalCode)) {
                         modifiedCustomer.setAddressPostalCode(newAddressPostalCode);
+                    } else if (Objects.isNull(customer.getAddressPostalCode())) {
+                        invalidValueWarning(attributeName);
                     }
                     break;
                 case 5:
-                    String newAddressCity = defineAttribute(BLANK_INPUT_NOT_ALLOWED, "city");
+                    attributeName = "city";
+                    String newAddressCity = defineAttribute(BLANK_INPUT_NOT_ALLOWED, attributeName);
                     if (Objects.nonNull(newAddressCity)) {
                         modifiedCustomer.setAddressCity(newAddressCity);
+                    } else if (Objects.isNull(customer.getAddressCity())) {
+                        invalidValueWarning(attributeName);
                     }
                     break;
                 case 0:
@@ -178,9 +195,38 @@ public class CustomerMenuState extends MenuState {
             } else if (input.isBlank() && allowBlank) {
                 return input;
             } else if (input.isBlank()) {
-                System.out.println(attributeName + " cannot be empty");
+                invalidInput(attributeName);
             }
         }
+    }
+
+    private void invalidInput(String attributeName) {
+        System.out.println(attributeName + " cannot be empty");
+    }
+
+    private void invalidValueWarning(String attributeName) {
+        System.out.println("WARNING: " + attributeName + " cannot be left empty");
+    }
+
+    private boolean hasMoreThanOneNull(Customer customer) {
+        List<String> nullFields = new LinkedList<>();
+        for (Field f : customer.getClass().getDeclaredFields()) {
+            f.setAccessible(true);
+            try {
+                if (Objects.isNull(f.get(customer))) {
+                    nullFields.add(f.getName());
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return nullFields.size() > 1;
+    }
+
+    private void showCustomerBeforeAdd(Customer customer) {
+        String customerBeforeAddFmt = "%-16s | %-16s | %-20s | %-7s | %s\n";
+        System.out.printf(customerBeforeAddFmt, customer.getLastName(), customer.getFirstName(),
+                customer.getAddressStreet(), customer.getAddressPostalCode(), customer.getAddressCity());
     }
 
     protected void returnToPreviousMenuOption() {

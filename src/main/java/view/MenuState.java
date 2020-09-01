@@ -65,6 +65,10 @@ public abstract class MenuState {
         System.out.println("Operation cancelled");
     }
 
+    protected void reportOperationFailed() {
+        System.out.println("Operation failed");
+    }
+
     protected boolean userConfirms() {
         System.out.print("Press 'Y' to confirm: ");
         return "Y".equals(in.nextLine().toUpperCase());
