@@ -7,6 +7,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import util.HibernateUtil;
 
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -37,8 +38,12 @@ public class CustomerService {
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("id"),id));
-            Query<Customer> query = session.createQuery(criteriaQuery);
-            customer = query.getSingleResult();
+            try {
+                Query<Customer> query = session.createQuery(criteriaQuery);
+                customer = query.getSingleResult();
+            } catch (NoResultException e) {
+                return null;
+            }
         } catch (HibernateException e) {
             e.printStackTrace();
         }

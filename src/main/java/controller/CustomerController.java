@@ -20,8 +20,8 @@ public class CustomerController {
         customerService.add(customer);
     }
 
-    public void updateExistingCustomer() {
-
+    public void updateExistingCustomer(Customer customer) {
+        customerService.update(customer);
     }
 
     public void removeCustomer() {

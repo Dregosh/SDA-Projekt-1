@@ -36,6 +36,7 @@ public class CustomerMenuState extends MenuState {
                 break;
             case 0:
                 returnToPreviousMenuOption();
+                break;
             default:
                 System.out.println("Invalid choice");
         }
@@ -62,11 +63,26 @@ public class CustomerMenuState extends MenuState {
     }
 
     private void updateExistingCustomerOption() {
-        defineCustomerForContext();
-        customerController.updateExistingCustomer();
+        Customer customer = defineCustomerForContext();
+        if (Objects.isNull(customer)) {
+            reportOperationCancelled();
+            return;
+        }
+        System.out.print("Customer selected for the update: ");
+        showFormattedCustomer(customer);
+        customer = setCustomerFields(customer);
+        showFormattedCustomer(customer);
+        System.out.print("Proceed with update? ");
+        if (userConfirms()) {
+            customerController.updateExistingCustomer(customer);
+            reportOperationSuccessful();
+        } else {
+            reportOperationCancelled();
+        }
     }
 
     private void removeCustomerOption() {
+        setCustomerFields(new Customer());
         customerController.removeCustomer();
     }
 
@@ -77,7 +93,8 @@ public class CustomerMenuState extends MenuState {
     private Customer defineCustomerForContext() {
         int input;
         do {
-            System.out.print("Enter ID of the customer or 0 to cancel: ");
+            System.out.println("Enter ID of the customer or 0 to cancel");
+            System.out.print("> ");
             input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
             if (input != 0) {
                 Customer customer = customerController.findCustomerById(input);
@@ -93,6 +110,77 @@ public class CustomerMenuState extends MenuState {
             }
         } while (input != 0);
         return null;
+    }
+
+    private Customer setCustomerFields(Customer customer) {
+        int input;
+        Customer modifiedCustomer = customer;
+        do {
+            System.out.println("Choose attribute: ");
+            System.out.println("(1) Last name");
+            System.out.println("(2) First name");
+            System.out.println("(3) Street address");
+            System.out.println("(4) Postal code");
+            System.out.println("(5) City");
+            System.out.println("(0) Finish");
+            System.out.print("> ");
+            input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
+            switch (input) {
+                case 1:
+                    String newLastName = defineAttribute(BLANK_INPUT_NOT_ALLOWED, "last name");
+                    if (Objects.nonNull(newLastName)) {
+                        modifiedCustomer.setLastName(newLastName);
+                    }
+                    break;
+                case 2:
+                    String newFirstName = defineAttribute(BLANK_INPUT_NOT_ALLOWED, "first name");
+                    if (Objects.nonNull(newFirstName)) {
+                        modifiedCustomer.setFirstName(newFirstName);
+                    }
+                    break;
+                case 3:
+                    String newAddressStreet = defineAttribute(BLANK_INPUT_NOT_ALLOWED, "street address");
+                    if (Objects.nonNull(newAddressStreet)) {
+                        modifiedCustomer.setAddressStreet(newAddressStreet);
+                    }
+                    break;
+                case 4:
+                    String newAddressPostalCode = defineAttribute(BLANK_INPUT_NOT_ALLOWED, "postal code");
+                    if (Objects.nonNull(newAddressPostalCode)) {
+                        modifiedCustomer.setAddressPostalCode(newAddressPostalCode);
+                    }
+                    break;
+                case 5:
+                    String newAddressCity = defineAttribute(BLANK_INPUT_NOT_ALLOWED, "city");
+                    if (Objects.nonNull(newAddressCity)) {
+                        modifiedCustomer.setAddressCity(newAddressCity);
+                    }
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+            }
+        } while (input != 0);
+        return modifiedCustomer;
+    }
+
+    private String defineAttribute(boolean allowBlank, String attributeName) {
+        String input = "";
+        while (true) {
+            System.out.println("Input " + attributeName + " or 0 to return");
+            System.out.print("> ");
+            input = in.nextLine();
+            if (input.equals("0")) {
+                return null;
+            } else if (!input.isBlank()) {
+                return input;
+            } else if (input.isBlank() && allowBlank) {
+                return input;
+            } else if (input.isBlank()) {
+                System.out.println(attributeName + " cannot be empty");
+            }
+        }
     }
 
     protected void returnToPreviousMenuOption() {

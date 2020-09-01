@@ -14,7 +14,7 @@ public abstract class MenuState {
     protected static final String PRODUCT_INFO_FMT =
             "(#%02d) %-20s| %-12s| %-9.2f| %-2d pc(s)\n";
     protected static final String CUSTOMER_INFO_FMT =
-            "(#%02d) %-16s | %-24s | %-30s | %-9s | %-16s\n";
+            "(#%02d) %-16s | %-16s | %-20s | %-7s | %s\n";
 
     abstract public void show();
 
