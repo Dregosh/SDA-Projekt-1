@@ -83,7 +83,6 @@ public class CustomerMenuState extends MenuState {
     }
 
     private void removeCustomerOption() {
-        setCustomerFields(new Customer());
         customerController.removeCustomer();
     }
 
