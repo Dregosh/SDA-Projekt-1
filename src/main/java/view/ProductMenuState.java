@@ -45,7 +45,7 @@ public class ProductMenuState extends MenuState {
         }
     }
 
-    private void toProductBrowserMenuOption() {
+    protected void toProductBrowserMenuOption() {
         productController.toProductBrowserMenu();
     }
 
@@ -67,7 +67,8 @@ public class ProductMenuState extends MenuState {
     }
 
     private void updateExistingProductOption() {
-        Product product = defineProductForContext();
+        productController.toProductSelectionMenu();
+        Product product = productController.getModelProduct();
         if (Objects.isNull(product)) {
             reportOperationCancelled();
             return;
@@ -105,7 +106,8 @@ public class ProductMenuState extends MenuState {
     }
 
     private void removeProductOption() {
-        Product product = defineProductForContext();
+        productController.toProductSelectionMenu();
+        Product product = productController.getModelProduct();
         if (Objects.isNull(product)) {
             reportOperationCancelled();
             return;
@@ -123,22 +125,6 @@ public class ProductMenuState extends MenuState {
 
     protected void returnToPreviousMenuOption() {
         productController.returnToPreviousMenu();
-    }
-
-    protected Product defineProductForContext() {
-        int input;
-        do {
-            System.out.print("Enter product ID or 0 to cancel: ");
-            input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
-            if (input != 0) {
-                Product product = productController.findProductById(input);
-                showFormattedProduct(product);
-                if (userConfirms()) {
-                    return product;
-                }
-            }
-        } while (input != 0);
-        return null;
     }
 
     private String defineProductName(boolean allowBlank) {

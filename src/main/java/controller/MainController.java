@@ -8,10 +8,12 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class MainController {
-    private Deque<MenuState> states;
+    private final Deque<MenuState> states;
+    private final ProductController productController;
 
     public MainController() {
         this.states = new ArrayDeque<>();
+        this.productController = new ProductController(states);
     }
 
     public void start() {
@@ -22,7 +24,7 @@ public class MainController {
     }
 
     public void toProductMenu() {
-        states.push(new ProductMenuState(new ProductController(states)));
+        states.push(new ProductMenuState(productController));
     }
 
     public void toCustomerMenu() {
