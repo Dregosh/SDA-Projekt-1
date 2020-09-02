@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class CustomerMenuState extends MenuState {
-    private CustomerController customerController;
+    protected CustomerController customerController;
 
     public CustomerMenuState(CustomerController customerController) {
         this.customerController = customerController;

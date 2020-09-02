@@ -53,6 +53,16 @@ public abstract class MenuState {
         }
     }
 
+    protected void showFormattedCustomers(List<Customer> customers) {
+        if (customers.size() > 0) {
+            for (Customer c : customers) {
+                showFormattedCustomer(c);
+            }
+        } else {
+            System.out.println("<found nothing>");
+        }
+    }
+
     protected void reportNotImplented() {
         System.out.println("Option not implemented yet.");
     }

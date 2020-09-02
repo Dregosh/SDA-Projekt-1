@@ -1,6 +1,9 @@
 package view;
 
 import controller.CustomerController;
+import model.Customer;
+
+import java.util.List;
 
 public class CustomerBrowserMenuState extends CustomerMenuState {
 
@@ -41,10 +44,18 @@ public class CustomerBrowserMenuState extends CustomerMenuState {
     }
 
     private void findCustomerByFullNameOption() {
-
+        System.out.println("Enter last name or leave blank");
+        System.out.print("> ");
+        String lastName = in.nextLine();
+        System.out.println("Enter first name or leave blank");
+        System.out.print("> ");
+        String firstName = in.nextLine();
+        List<Customer> customers = customerController.findCustomerByFullName(lastName, firstName);
+        showFormattedCustomers(customers);
     }
 
     private void showAllCustomersOption() {
-
+        List<Customer> customers = customerController.findAllCustomers();
+        showFormattedCustomers(customers);
     }
 }

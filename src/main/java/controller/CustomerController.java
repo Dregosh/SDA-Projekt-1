@@ -6,6 +6,7 @@ import view.CustomerBrowserMenuState;
 import view.MenuState;
 
 import java.util.Deque;
+import java.util.List;
 
 public class CustomerController {
     private Deque<MenuState> states;
@@ -34,6 +35,14 @@ public class CustomerController {
 
     public Customer findCustomerById(long id) {
         return customerService.findById(id);
+    }
+
+    public List<Customer> findCustomerByFullName(String lastName, String firstName) {
+        return customerService.findByFullName(lastName, firstName);
+    }
+
+    public List<Customer> findAllCustomers() {
+        return customerService.findAllCustomers();
     }
 
     public void returnToPreviousMenu() {
