@@ -3,6 +3,7 @@ package model;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "customers")
 public class Customer {
@@ -31,6 +32,9 @@ public class Customer {
     @Column(name = "address_city")
     @NotNull
     private String addressCity;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Order> orders;
 
     public Customer() {
     }
@@ -83,4 +87,12 @@ public class Customer {
         this.addressCity = addressCity;
     }
 
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
 }

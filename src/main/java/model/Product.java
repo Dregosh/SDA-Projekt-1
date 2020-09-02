@@ -3,6 +3,7 @@ package model;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "products")
 public class Product {
@@ -26,6 +27,9 @@ public class Product {
     @Column
     @NotNull
     private int amount;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems;
 
     public Product() {
     }
@@ -78,14 +82,11 @@ public class Product {
         this.amount = amount;
     }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-               "id=" + id +
-               ", name='" + name + '\'' +
-               ", type=" + type +
-               ", price=" + price +
-               ", amount=" + amount +
-               '}';
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }
