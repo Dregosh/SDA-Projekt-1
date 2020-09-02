@@ -83,7 +83,19 @@ public class CustomerMenuState extends MenuState {
     }
 
     private void removeCustomerOption() {
-        customerController.removeCustomer();
+        Customer customer = defineCustomerForContext();
+        if (Objects.isNull(customer)) {
+            reportOperationCancelled();
+            return;
+        }
+        System.out.print("Customer selected for deletion: ");
+        showFormattedCustomer(customer);
+        if (userConfirms()) {
+            customerController.removeCustomer(customer);
+            reportOperationSuccessful();
+        } else {
+            reportOperationCancelled();
+        }
     }
 
     private void toCustomerBrowserMenuOption() {

@@ -25,8 +25,8 @@ public class CustomerController {
         customerService.update(customer);
     }
 
-    public void removeCustomer() {
-
+    public void removeCustomer(Customer customer) {
+        customerService.delete(customer);
     }
 
     public void toCustomerBrowserMenu() {

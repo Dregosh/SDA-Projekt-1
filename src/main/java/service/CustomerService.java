@@ -115,6 +115,20 @@ public class CustomerService {
         }
     }
 
+    public void delete(Customer customer) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.delete(customer);
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
     public void initialCustomers() {
         Customer customer = new Customer();
         customer.setLastName("Kowalski");
