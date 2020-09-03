@@ -48,8 +48,8 @@ public class ProductBrowserMenuState extends ProductMenuState {
 
     private void findProductByTypeOption() {
         System.out.print("(0) ANY ");
-        showProductTypes();
-        int typeNumber = defineLegitProductTypeNumber(ZERO_ALLOWED);
+        showEnumTypes(ProductType.class);
+        int typeNumber = defineLegitEnumTypeNumber(ProductType.class, ZERO_ALLOWED);
         if (typeNumber != 0) {
             ProductType type = ProductType.values()[typeNumber - 1];
             List<Product> products = productController.findProductsByType(type);

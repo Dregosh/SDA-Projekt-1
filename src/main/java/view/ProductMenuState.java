@@ -8,8 +8,6 @@ import java.util.Objects;
 
 public class ProductMenuState extends MenuState {
     protected final ProductController productController;
-    protected static final boolean ZERO_ALLOWED = true;
-    protected static final boolean ZERO_NOT_ALLOWED = false;
 
     public ProductMenuState(ProductController productController) {
         this.productController = productController;
@@ -51,8 +49,8 @@ public class ProductMenuState extends MenuState {
 
     private void addNewProductOption() {
         String name = defineProductName(BLANK_INPUT_NOT_ALLOWED);
-        showProductTypes();
-        int typeNumber = defineLegitProductTypeNumber(ZERO_NOT_ALLOWED);
+        showEnumTypes(ProductType.class);
+        int typeNumber = defineLegitEnumTypeNumber(ProductType.class, ZERO_NOT_ALLOWED);
         ProductType type = ProductType.values()[typeNumber - 1];
         double price = defineProductPrice(BLANK_INPUT_NOT_ALLOWED);
         int amount = defineAmountInStock(BLANK_INPUT_NOT_ALLOWED);
@@ -82,8 +80,8 @@ public class ProductMenuState extends MenuState {
             product.setName(newName);
         }
         System.out.print("(0) <ORIGINAL TYPE> ");
-        showProductTypes();
-        int newTypeNumber = defineLegitProductTypeNumber(ZERO_ALLOWED);
+        showEnumTypes(ProductType.class);
+        int newTypeNumber = defineLegitEnumTypeNumber(ProductType.class, ZERO_ALLOWED);
         if (newTypeNumber != 0) {
             product.setType(ProductType.values()[newTypeNumber - 1]);
         }
@@ -141,20 +139,6 @@ public class ProductMenuState extends MenuState {
         return productName;
     }
 
-    protected int defineLegitProductTypeNumber(boolean allowZero) {
-        int prodTypeNo;
-        boolean legitInput;
-        do {
-            System.out.print("Enter product type number: ");
-            prodTypeNo = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
-            legitInput = verifyInputProductType(allowZero, prodTypeNo);
-            if (!legitInput) {
-                System.out.println("Invalid number. Try again.");
-            }
-        } while (!legitInput);
-        return prodTypeNo;
-    }
-
     private double defineProductPrice(boolean allowBlank) {
         boolean legitInput;
         double prodPrice;
@@ -187,18 +171,5 @@ public class ProductMenuState extends MenuState {
             }
         } while (!legitInput);
         return amount;
-    }
-
-    protected void showProductTypes() {
-        for (int i = 0; i < ProductType.values().length; i++) {
-            System.out.print("(" + (i + 1) + ") " + ProductType.values()[i] + " ");
-        }
-        System.out.println();
-    }
-
-    protected boolean verifyInputProductType(boolean allowZero, int number) {
-        int rangeMin = allowZero ? 0 : 1;
-        int rangeMax = ProductType.values().length;
-        return (number >= rangeMin && number <= rangeMax);
     }
 }

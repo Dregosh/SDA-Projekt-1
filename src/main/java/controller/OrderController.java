@@ -16,7 +16,7 @@ public class OrderController {
     }
 
     public void addNewOrderToDB(Order order) {
-
+        orderService.addOrder(order);
     }
 
     public void returnToPreviousMenu() {

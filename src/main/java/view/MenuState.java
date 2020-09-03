@@ -1,7 +1,10 @@
 package view;
 
 import model.Product;
+import model.ProductType;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -10,6 +13,8 @@ public abstract class MenuState {
     protected final Scanner in = new Scanner(System.in);
     protected static final boolean BLANK_INPUT_ALLOWED = true;
     protected static final boolean BLANK_INPUT_NOT_ALLOWED = false;
+    protected static final boolean ZERO_ALLOWED = true;
+    protected static final boolean ZERO_NOT_ALLOWED = false;
     protected static final int BLANK_INPUT_MARKER = -1;
     protected static final String PRODUCT_INFO_FMT =
             "(#%02d) %-20s| %-12s| %-9.2f| %-2d pc(s)\n";
@@ -29,6 +34,51 @@ public abstract class MenuState {
                 System.out.print("> ");
             }
         }
+    }
+
+    protected LocalDate requestDateInput(boolean allowBlank) {
+        while (true) {
+            try {
+                String rawInput = in.nextLine();
+                if (rawInput.isBlank() && allowBlank) {
+                    return LocalDate.now();
+                }
+                return LocalDate.parse(rawInput);
+            } catch (DateTimeParseException e) {
+                System.out.println("Date must be in format: 'yyyy-mm-dd'");
+                System.out.print("> ");
+            }
+        }
+    }
+
+    protected <E extends Enum<E>> int defineLegitEnumTypeNumber(
+            Class<E> enumClass, boolean allowZero) {
+        int typeNumber;
+        boolean legitInput;
+        do {
+            System.out.print("Enter the Type number: ");
+            typeNumber = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
+            legitInput = verifyInputInRangeOfEnumTypes(
+                    enumClass, allowZero, typeNumber);
+            if (!legitInput) {
+                System.out.println("Invalid number. Try again.");
+            }
+        } while (!legitInput);
+        return typeNumber;
+    }
+
+    protected <E extends Enum<E>> void showEnumTypes(Class<E> enumClass) {
+        for (int i = 0; i < enumClass.getEnumConstants().length; i++) {
+            System.out.print("(" + (i + 1) + ") " + enumClass.getEnumConstants()[i] + " ");
+        }
+        System.out.println();
+    }
+
+    protected <E extends  Enum<E>> boolean verifyInputInRangeOfEnumTypes(
+            Class<E> enumClass, boolean allowZero, int number) {
+        int rangeMin = allowZero ? 0 : 1;
+        int rangeMax = enumClass.getEnumConstants().length;
+        return (number >= rangeMin && number <= rangeMax);
     }
 
     protected void showFormattedProduct(Product product) {

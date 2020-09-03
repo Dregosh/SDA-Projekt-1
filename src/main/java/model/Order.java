@@ -27,7 +27,7 @@ public class Order {
     private OrderStatus status;
 
     @Column(name = "payment_date")
-    private Double paymentDate;
+    private LocalDate paymentDate;
 
     public Order() {
     }
@@ -72,11 +72,11 @@ public class Order {
         this.status = status;
     }
 
-    public Double getPaymentDate() {
+    public LocalDate getPaymentDate() {
         return paymentDate;
     }
 
-    public void setPaymentDate(Double paymentDate) {
+    public void setPaymentDate(LocalDate paymentDate) {
         this.paymentDate = paymentDate;
     }
 }

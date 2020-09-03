@@ -7,6 +7,7 @@ import model.Order;
 import model.OrderStatus;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class OrderMenuState extends MenuState {
     private final OrderController orderController;
@@ -44,52 +45,54 @@ public class OrderMenuState extends MenuState {
 
     private void createNewOrderOption() {
         Order order = new Order();
-        order.setOrderDate(defineOrderDate());
+        System.out.print("SET ORDER DATE: ");
+        order.setOrderDate(defineDate());
         order.setCustomer(defineCustomer());
         order.setStatus(defineStatus());
-        order.setPaymentDate(definePaymentDate());
-        orderController.addNewOrderToDB(order);
-        while (promptUserForOrderItemInsert()) {
-            addNewOrderItem(order);
+        System.out.print("SET PAYMENT DATE: ");
+        order.setPaymentDate(defineDate());
+        System.out.print("Save order in the DataBase? ");
+        if (userConfirms()) {
+            orderController.addNewOrderToDB(order);
+        } else {
+            reportOperationCancelled();
+        }
+        if (Objects.nonNull(order.getId())) {
+            System.out.println("sekcja pozycji orderów");
+            while (promptUserForOrderItemInsert()) {
+                addNewOrderItem(order);
+            }
         }
     }
 
-    private LocalDate defineOrderDate() {
-        System.out.print("Enter order date in format yyyy-mm-dd " +
+    private LocalDate defineDate() {
+        System.out.print("enter the date in format 'yyyy-mm-dd' " +
                          "or leave field blank to use current date: ");
-        String input = in.nextLine();
-        LocalDate orderDate = LocalDate.now();
-        if (!input.isBlank()) {
-            orderDate = LocalDate.parse(input);
-        }
-        return orderDate;
+        return requestDateInput(BLANK_INPUT_ALLOWED);
     }
 
     private Customer defineCustomer() {
         //customer selection logic to be implemented here..
+        System.out.println("SET CUSTOMER: <using hardcoded Customer persisted in DB" +
+                           " under the ID #01>");
         Customer customer = new Customer();
-        customer.setLastName("Nowak");
-        customer.setFirstName("Jan");
-        customer.setAddressStreet("Żabki 2/4");
-        customer.setAddressPostalCode("05-507");
-        customer.setAddressCity("Kraków");
+        customer.setId(1L);
         return customer;
     }
 
     private OrderStatus defineStatus() {
-        return null;
+        System.out.print("SET ORDER STATUS: ");
+        showEnumTypes(OrderStatus.class);
+        int typeNumber = defineLegitEnumTypeNumber(OrderStatus.class, ZERO_NOT_ALLOWED);
+        return OrderStatus.values()[typeNumber - 1];
+    }
+
+    private void addNewOrderItem(Order order) {
+
     }
 
     private boolean promptUserForOrderItemInsert() {
         return false;
-    }
-
-    private Double definePaymentDate() {
-        return null;
-    }
-
-    private void addNewOrderItem(Order order) {
-        
     }
 
     private void returnToPreviousMenuOption() {
