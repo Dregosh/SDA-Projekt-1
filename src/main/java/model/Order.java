@@ -19,7 +19,7 @@ public class Order {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
-    @Column(name = "order_date")
+    @Column(name = "order_date", nullable = false)
     private LocalDate orderDate;
 
     @Enumerated(EnumType.STRING)

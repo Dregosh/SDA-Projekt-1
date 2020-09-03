@@ -2,6 +2,11 @@ package view;
 
 import controller.OrderController;
 import controller.ProductController;
+import model.Customer;
+import model.Order;
+import model.OrderStatus;
+
+import java.time.LocalDate;
 
 public class OrderMenuState extends MenuState {
     private final OrderController orderController;
@@ -38,7 +43,53 @@ public class OrderMenuState extends MenuState {
     }
 
     private void createNewOrderOption() {
-        reportNotImplented();
+        Order order = new Order();
+        order.setOrderDate(defineOrderDate());
+        order.setCustomer(defineCustomer());
+        order.setStatus(defineStatus());
+        order.setPaymentDate(definePaymentDate());
+        orderController.addNewOrderToDB(order);
+        while (promptUserForOrderItemInsert()) {
+            addNewOrderItem(order);
+        }
+    }
+
+    private LocalDate defineOrderDate() {
+        System.out.print("Enter order date in format yyyy-mm-dd " +
+                         "or leave field blank to use current date: ");
+        String input = in.nextLine();
+        LocalDate orderDate = LocalDate.now();
+        if (!input.isBlank()) {
+            orderDate = LocalDate.parse(input);
+        }
+        return orderDate;
+    }
+
+    private Customer defineCustomer() {
+        //customer selection logic to be implemented here..
+        Customer customer = new Customer();
+        customer.setLastName("Nowak");
+        customer.setFirstName("Jan");
+        customer.setAddressStreet("Żabki 2/4");
+        customer.setAddressPostalCode("05-507");
+        customer.setAddressCity("Kraków");
+        return customer;
+    }
+
+    private OrderStatus defineStatus() {
+        return null;
+    }
+
+    private boolean promptUserForOrderItemInsert() {
+        return false;
+    }
+
+    private Double definePaymentDate() {
+        return null;
+    }
+
+    private void addNewOrderItem(Order order) {
+        
     }
 
     private void returnToPreviousMenuOption() {

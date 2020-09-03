@@ -1,5 +1,6 @@
 package controller;
 
+import model.Order;
 import service.OrderService;
 import view.MenuState;
 
@@ -12,6 +13,10 @@ public class OrderController {
     public OrderController(Deque<MenuState> states) {
         this.states = states;
         this.orderService = new OrderService();
+    }
+
+    public void addNewOrderToDB(Order order) {
+
     }
 
     public void returnToPreviousMenu() {
