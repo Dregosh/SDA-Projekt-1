@@ -41,8 +41,7 @@ public class MainMenuState extends MenuState {
     }
 
     private void toCustomerMenuOption() {
-        //mainController.toCustomerMenu();
-        reportNotImplented();
+        mainController.toCustomerMenu();
     }
 
     private void toOrderMenuOption() {

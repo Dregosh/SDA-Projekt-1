@@ -2,6 +2,7 @@ package view;
 
 import model.Order;
 import model.OrderItem;
+import model.Customer;
 import model.Product;
 import model.ProductType;
 
@@ -20,6 +21,8 @@ public abstract class MenuState {
     protected static final int BLANK_INPUT_MARKER = -1;
     protected static final String PRODUCT_INFO_FMT =
             "(#%02d) %-20s| %-12s| %-9.2f| %-2d pc(s)\n";
+    protected static final String CUSTOMER_INFO_FMT =
+            "(#%02d) %-16s | %-16s | %-20s | %-7s | %s\n";
     protected static final String ORDER_INFO_FMT =
             "Order #%d (%s %s), placed on: %s, status: %s, paid on: %s\n";
     protected static final String ITEMS_INFO_FMT =
@@ -97,6 +100,11 @@ public abstract class MenuState {
         }
     }
 
+    protected void showFormattedCustomer(Customer customer) {
+        System.out.printf(CUSTOMER_INFO_FMT, customer.getId(), customer.getLastName(), customer.getFirstName(),
+                customer.getAddressStreet(), customer.getAddressPostalCode(), customer.getAddressCity());
+    }
+
     protected void showFormattedProducts(List<Product> products) {
         if (products.size() > 0) {
             for (Product p : products) {
@@ -150,6 +158,16 @@ public abstract class MenuState {
         }
     }
 
+    protected void showFormattedCustomers(List<Customer> customers) {
+        if (customers.size() > 0) {
+            for (Customer c : customers) {
+                showFormattedCustomer(c);
+            }
+        } else {
+            System.out.println("<found nothing>");
+        }
+    }
+
     protected void reportNotImplented() {
         System.out.println("Option not implemented yet.");
     }
@@ -164,6 +182,10 @@ public abstract class MenuState {
 
     protected void reportFoundNothing() {
         System.out.println("<found nothing>");
+    }
+
+    protected void reportOperationFailed() {
+        System.out.println("Operation failed");
     }
 
     protected boolean userConfirms() {
