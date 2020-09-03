@@ -4,6 +4,7 @@ import controller.CustomerController;
 import model.Customer;
 
 import java.util.List;
+import java.util.Objects;
 
 public class CustomerBrowserMenuState extends CustomerMenuState {
 
@@ -40,7 +41,16 @@ public class CustomerBrowserMenuState extends CustomerMenuState {
     }
 
     private void findCustomerByIdOption() {
-
+        System.out.println("Enter ID of the customer");
+        System.out.print("> ");
+        int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
+        Customer customer = customerController.findCustomerById(input);
+        if (Objects.isNull(customer)) {
+            System.out.println("Customer not found.");
+        } else {
+            System.out.println("Found: ");
+            showFormattedCustomer(customer);
+        }
     }
 
     private void findCustomerByFullNameOption() {

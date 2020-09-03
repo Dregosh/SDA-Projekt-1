@@ -17,25 +17,25 @@ public class CustomerMenuState extends MenuState {
 
     public void show() {
         System.out.println("\nCUSTOMER MENU");
-        System.out.println("(1) Add a new customer to the DataBase");
-        System.out.println("(2) Update an existing customer");
-        System.out.println("(3) Remove a customer from the DataBase");
-        System.out.println("(4) To Customer Browser Menu...");
+        System.out.println("(1) Customer Browser Menu...");
+        System.out.println("(2) Add a new customer to the DataBase");
+        System.out.println("(3) Update an existing customer");
+        System.out.println("(4) Remove a customer from the DataBase");
         System.out.println("(0) Return to the previous menu");
         System.out.print("> ");
         int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
         switch (input) {
             case 1:
-                addNewCustomerOption();
+                toCustomerBrowserMenuOption();
                 break;
             case 2:
-                updateExistingCustomerOption();
+                addNewCustomerOption();
                 break;
             case 3:
-                removeCustomerOption();
+                updateExistingCustomerOption();
                 break;
             case 4:
-                toCustomerBrowserMenuOption();
+                removeCustomerOption();
                 break;
             case 0:
                 returnToPreviousMenuOption();
@@ -64,7 +64,8 @@ public class CustomerMenuState extends MenuState {
     }
 
     private void updateExistingCustomerOption() {
-        Customer customer = defineCustomerForContext();
+        customerController.toCustomerSelectionMenu();
+        Customer customer = customerController.getModelCustomer();
         if (Objects.isNull(customer)) {
             reportOperationCancelled();
             return;
@@ -83,7 +84,8 @@ public class CustomerMenuState extends MenuState {
     }
 
     private void removeCustomerOption() {
-        Customer customer = defineCustomerForContext();
+        customerController.toCustomerSelectionMenu();
+        Customer customer = customerController.getModelCustomer();
         if (Objects.isNull(customer)) {
             reportOperationCancelled();
             return;
@@ -98,30 +100,8 @@ public class CustomerMenuState extends MenuState {
         }
     }
 
-    private void toCustomerBrowserMenuOption() {
+    protected void toCustomerBrowserMenuOption() {
         customerController.toCustomerBrowserMenu();
-    }
-
-    private Customer defineCustomerForContext() {
-        int input;
-        do {
-            System.out.println("Enter ID of the customer or 0 to cancel");
-            System.out.print("> ");
-            input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
-            if (input != 0) {
-                Customer customer = customerController.findCustomerById(input);
-                if (Objects.isNull(customer)) {
-                    System.out.println("Customer not found.");
-                } else {
-                    System.out.print("Found: ");
-                    showFormattedCustomer(customer);
-                    if (userConfirms()) {
-                        return customer;
-                    }
-                }
-            }
-        } while (input != 0);
-        return null;
     }
 
     private Customer setCustomerFields(Customer customer) {

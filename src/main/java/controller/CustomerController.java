@@ -3,6 +3,7 @@ package controller;
 import model.Customer;
 import service.CustomerService;
 import view.CustomerBrowserMenuState;
+import view.CustomerSelectionMenuState;
 import view.MenuState;
 
 import java.util.Deque;
@@ -11,10 +12,19 @@ import java.util.List;
 public class CustomerController {
     private Deque<MenuState> states;
     private CustomerService customerService;
+    private Customer modelCustomer;
 
     public CustomerController(Deque<MenuState> states) {
         this.states = states;
         this.customerService = new CustomerService();
+    }
+
+    public Customer getModelCustomer() {
+        return modelCustomer;
+    }
+
+    public void setModelCustomer(Customer modelCustomer) {
+        this.modelCustomer = modelCustomer;
     }
 
     public void addNewCustomer(Customer customer){
@@ -31,6 +41,15 @@ public class CustomerController {
 
     public void toCustomerBrowserMenu() {
         states.push(new CustomerBrowserMenuState(this));
+    }
+
+    public void toCustomerSelectionMenu() {
+        modelCustomer = null;
+        int loopMarker = states.size();
+        states.push(new CustomerSelectionMenuState(this));
+        while (loopMarker < states.size()) {
+            states.getFirst().show();
+        }
     }
 
     public Customer findCustomerById(long id) {
