@@ -1,10 +1,12 @@
 package controller;
 
 import model.Order;
+import model.OrderItem;
 import service.OrderService;
 import view.MenuState;
 
 import java.util.Deque;
+import java.util.List;
 
 public class OrderController {
     private final Deque<MenuState> states;
@@ -17,6 +19,14 @@ public class OrderController {
 
     public void addNewOrderToDB(Order order) {
         orderService.addOrder(order);
+    }
+
+    public void addNewOrderItemToDB(OrderItem orderItem) {
+        orderService.addOrderItem(orderItem);
+    }
+
+    public List<Order> findAllOrders() {
+        return orderService.findAllOrders();
     }
 
     public void returnToPreviousMenu() {

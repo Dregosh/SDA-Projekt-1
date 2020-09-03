@@ -1,5 +1,7 @@
 package view;
 
+import model.Order;
+import model.OrderItem;
 import model.Product;
 import model.ProductType;
 
@@ -18,6 +20,10 @@ public abstract class MenuState {
     protected static final int BLANK_INPUT_MARKER = -1;
     protected static final String PRODUCT_INFO_FMT =
             "(#%02d) %-20s| %-12s| %-9.2f| %-2d pc(s)\n";
+    protected static final String ORDER_INFO_FMT =
+            "Order #%d (%s %s), placed on: %s, status: %s, paid on: %s\n";
+    protected static final String ITEMS_INFO_FMT =
+            "\tItem: %s %s, sales price: %.2f, given discount: %d%%, sales amount: %d\n";
 
     abstract public void show();
 
@@ -69,7 +75,8 @@ public abstract class MenuState {
 
     protected <E extends Enum<E>> void showEnumTypes(Class<E> enumClass) {
         for (int i = 0; i < enumClass.getEnumConstants().length; i++) {
-            System.out.print("(" + (i + 1) + ") " + enumClass.getEnumConstants()[i] + " ");
+            System.out.print("(" + (i + 1) + ") " +
+                             enumClass.getEnumConstants()[i] + " ");
         }
         System.out.println();
     }
@@ -97,6 +104,49 @@ public abstract class MenuState {
             }
         } else {
             reportFoundNothing();
+        }
+    }
+
+    public void showFormatterOrder(Order order) {
+        if (Objects.nonNull(order)) {
+            Long id = Objects.nonNull(order.getId()) ? order.getId() : 0L;
+            String paymentDate = Objects.nonNull(order.getPaymentDate()) ?
+                                 order.getPaymentDate().toString() : "<not paid yet>";
+            System.out.printf(ORDER_INFO_FMT, id, order.getCustomer().getLastName(),
+                              order.getCustomer().getFirstName(), order.getOrderDate(),
+                              order.getStatus(), paymentDate);
+            if (order.getOrderItems() != null && order.getOrderItems().size() > 0) {
+                for (OrderItem item : order.getOrderItems()) {
+                    showFormattedOrderItem(item);
+                }
+            } else {
+                System.out.println("\t<this order contains zero items>");
+            }
+        } else {
+            System.out.println("<nothing to display>");
+        }
+    }
+
+    public void showFormattedOrderItem(OrderItem item) {
+        if (Objects.nonNull(item)) {
+            System.out.printf(ITEMS_INFO_FMT, item.getProduct().getName(),
+                              item.getProduct().getType(),
+                              item.getSalesPrice(),
+                              item.getDiscountPercent(),
+                              item.getSalesAmount());
+        } else {
+            System.out.println("<nothing to display>");
+        }
+    }
+
+    public void showFormattedOrders(List<Order> orders) {
+        if (orders.size() > 0) {
+            for (Order o : orders) {
+                showFormatterOrder(o);
+                System.out.println();
+            }
+        } else {
+            System.out.println("<nothing to display>");
         }
     }
 
