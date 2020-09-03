@@ -19,12 +19,15 @@ public class Order {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
-    @Column
-    private LocalDate date;
+    @Column(name = "order_date")
+    private LocalDate orderDate;
 
     @Enumerated(EnumType.STRING)
     @Column
     private OrderStatus status;
+
+    @Column(name = "payment_date")
+    private Double paymentDate;
 
     public Order() {
     }
@@ -53,12 +56,12 @@ public class Order {
         this.orderItems = orderItems;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getOrderDate() {
+        return orderDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
     }
 
     public OrderStatus getStatus() {
@@ -67,5 +70,13 @@ public class Order {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public Double getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(Double paymentDate) {
+        this.paymentDate = paymentDate;
     }
 }

@@ -46,8 +46,7 @@ public class MainMenuState extends MenuState {
     }
 
     private void toOrderMenuOption() {
-        //mainController.toOrderMenu();
-        reportNotImplented();
+        mainController.toOrderMenu();
     }
 
     private void exitProgramOption() {
