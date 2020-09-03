@@ -53,6 +53,11 @@ public class CustomerMenuState extends MenuState {
             reportOperationFailed();
             return;
         }
+        if(existsInDb(customer)) {
+            System.out.println("Customer already exists");
+            reportOperationFailed();
+            return;
+        }
         showCustomerBeforeAdd(customer);
         System.out.print("Save customer in the DataBase? ");
         if (userConfirms()) {
@@ -109,11 +114,16 @@ public class CustomerMenuState extends MenuState {
         Customer modifiedCustomer = customer;
         do {
             System.out.println("Choose attribute: ");
-            System.out.println("(1) Last name");
-            System.out.println("(2) First name");
-            System.out.println("(3) Street address");
-            System.out.println("(4) Postal code");
-            System.out.println("(5) City");
+            System.out.print("(1) Last name");
+            menuDisplayAttribute(modifiedCustomer.getLastName());
+            System.out.print("(2) First name");
+            menuDisplayAttribute(modifiedCustomer.getFirstName());
+            System.out.print("(3) Street address");
+            menuDisplayAttribute(modifiedCustomer.getAddressStreet());
+            System.out.print("(4) Postal code");
+            menuDisplayAttribute(modifiedCustomer.getAddressPostalCode());
+            System.out.print("(5) City");
+            menuDisplayAttribute(modifiedCustomer.getAddressCity());
             System.out.println("(0) Finish");
             System.out.print("> ");
             input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
@@ -218,6 +228,17 @@ public class CustomerMenuState extends MenuState {
         String customerBeforeAddFmt = "%-16s | %-16s | %-20s | %-7s | %s\n";
         System.out.printf(customerBeforeAddFmt, customer.getLastName(), customer.getFirstName(),
                 customer.getAddressStreet(), customer.getAddressPostalCode(), customer.getAddressCity());
+    }
+
+    private void menuDisplayAttribute(Object o) {
+        if (Objects.nonNull(o) && !("").equals(o)) {
+            System.out.print(" <" + o + ">");
+        }
+            System.out.print("\n");
+    }
+
+    private boolean existsInDb(Customer customer) {
+        return customerController.findCustomerByAllButId(customer) != null;
     }
 
     protected void returnToPreviousMenuOption() {

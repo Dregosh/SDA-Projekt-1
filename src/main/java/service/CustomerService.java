@@ -25,7 +25,7 @@ public class CustomerService {
             session.save(customer);
             transaction.commit();
         } catch (HibernateException e) {
-            if(transaction != null) {
+            if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
@@ -38,7 +38,7 @@ public class CustomerService {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
-            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("id"),id));
+            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("id"), id));
             try {
                 Query<Customer> query = session.createQuery(criteriaQuery);
                 customer = query.getSingleResult();
@@ -69,6 +69,31 @@ public class CustomerService {
         return customers;
     }
 
+    public Customer findByAllButId(Customer customer) {
+        Customer result = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            Root<Customer> root = criteriaQuery.from(Customer.class);
+            Predicate[] predicates = new Predicate[5];
+            predicates[0] = criteriaBuilder.equal(root.get("lastName"), customer.getLastName());
+            predicates[1] = criteriaBuilder.equal(root.get("firstName"), customer.getFirstName());
+            predicates[2] = criteriaBuilder.equal(root.get("addressStreet"), customer.getAddressStreet());
+            predicates[3] = criteriaBuilder.equal(root.get("addressPostalCode"), customer.getAddressPostalCode());
+            predicates[4] = criteriaBuilder.equal(root.get("addressCity"), customer.getAddressCity());
+            criteriaQuery.select(root).where(predicates);
+            try {
+                Query<Customer> query = session.createQuery(criteriaQuery);
+                result = query.getSingleResult();
+            } catch (NoResultException e) {
+                return null;
+            }
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public List<Customer> findAllCustomers() {
         List<Customer> customers = new ArrayList<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -91,7 +116,7 @@ public class CustomerService {
             session.update(customer);
             transaction.commit();
         } catch (HibernateException e) {
-            if(transaction != null) {
+            if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
@@ -103,12 +128,12 @@ public class CustomerService {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             Customer customer = findById(id);
-            if(Objects.nonNull(customer)) {
+            if (Objects.nonNull(customer)) {
                 session.delete(customer);
             }
             transaction.commit();
         } catch (HibernateException e) {
-            if(transaction != null) {
+            if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();

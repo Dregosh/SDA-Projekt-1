@@ -56,6 +56,10 @@ public class CustomerController {
         return customerService.findById(id);
     }
 
+    public Customer findCustomerByAllButId(Customer customer) {
+        return customerService.findByAllButId(customer);
+    }
+
     public List<Customer> findCustomerByFullName(String lastName, String firstName) {
         return customerService.findByFullName(lastName, firstName);
     }
