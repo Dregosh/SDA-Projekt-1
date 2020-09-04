@@ -230,13 +230,6 @@ public class CustomerMenuState extends MenuState {
                 customer.getAddressStreet(), customer.getAddressPostalCode(), customer.getAddressCity());
     }
 
-    private void menuDisplayAttribute(Object o) {
-        if (Objects.nonNull(o) && !("").equals(o)) {
-            System.out.print(" <" + o + ">");
-        }
-            System.out.print("\n");
-    }
-
     private boolean existsInDb(Customer customer) {
         return customerController.findCustomerByAllButId(customer) != null;
     }

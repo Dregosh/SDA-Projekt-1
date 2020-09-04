@@ -6,8 +6,10 @@ import model.Customer;
 import model.Product;
 import model.ProductType;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -91,10 +93,26 @@ public abstract class MenuState {
         return (number >= rangeMin && number <= rangeMax);
     }
 
+    protected <T> boolean validateObjectFieldsNonNull(T object, int nullsThreshold) {
+        List<String> nullFields = new LinkedList<>();
+        for (Field f : object.getClass().getDeclaredFields()) {
+            f.setAccessible(true);
+            try {
+                if (Objects.isNull(f.get(object))) {
+                    nullFields.add(f.getName());
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return nullFields.size() > nullsThreshold;
+    }
+
     protected void showFormattedProduct(Product product) {
         if (Objects.nonNull(product)) {
-            System.out.printf(PRODUCT_INFO_FMT, product.getId(), product.getName(),
-                              product.getType(), product.getPrice(), product.getAmount());
+            Long id = Objects.nonNull(product.getId()) ? product.getId() : 0L;
+            System.out.printf(PRODUCT_INFO_FMT, id, product.getName(), product.getType(),
+                              product.getPrice(), product.getAmount());
         } else {
             reportFoundNothing();
         }
@@ -103,16 +121,6 @@ public abstract class MenuState {
     protected void showFormattedCustomer(Customer customer) {
         System.out.printf(CUSTOMER_INFO_FMT, customer.getId(), customer.getLastName(), customer.getFirstName(),
                 customer.getAddressStreet(), customer.getAddressPostalCode(), customer.getAddressCity());
-    }
-
-    protected void showFormattedProducts(List<Product> products) {
-        if (products.size() > 0) {
-            for (Product p : products) {
-                showFormattedProduct(p);
-            }
-        } else {
-            reportFoundNothing();
-        }
     }
 
     public void showFormatterOrder(Order order) {
@@ -147,14 +155,13 @@ public abstract class MenuState {
         }
     }
 
-    public void showFormattedOrders(List<Order> orders) {
-        if (orders.size() > 0) {
-            for (Order o : orders) {
-                showFormatterOrder(o);
-                System.out.println();
+    protected void showFormattedProducts(List<Product> products) {
+        if (products.size() > 0) {
+            for (Product p : products) {
+                showFormattedProduct(p);
             }
         } else {
-            System.out.println("<nothing to display>");
+            reportFoundNothing();
         }
     }
 
@@ -166,6 +173,24 @@ public abstract class MenuState {
         } else {
             System.out.println("<found nothing>");
         }
+    }
+
+    public void showFormattedOrders(List<Order> orders) {
+        if (orders.size() > 0) {
+            for (Order o : orders) {
+                showFormatterOrder(o);
+                System.out.println();
+            }
+        } else {
+            System.out.println("<nothing to display>");
+        }
+    }
+
+    protected void menuDisplayAttribute(Object o) {
+        if (Objects.nonNull(o) && !("").equals(o)) {
+            System.out.print(" <" + o + ">");
+        }
+        System.out.print("\n");
     }
 
     protected void reportNotImplented() {

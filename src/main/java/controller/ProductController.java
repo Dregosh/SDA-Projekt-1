@@ -57,6 +57,10 @@ public class ProductController {
         return productService.findProductsByType(type);
     }
 
+    public Product findProductByNameAndType(Product product) {
+        return productService.findProductByNameAndType(product);
+    }
+
     public List<Product> showAllProducts() {
         return productService.findAllProducts();
     }

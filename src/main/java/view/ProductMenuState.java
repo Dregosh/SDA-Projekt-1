@@ -8,6 +8,7 @@ import java.util.Objects;
 
 public class ProductMenuState extends MenuState {
     protected final ProductController productController;
+    public static final int NULL_FIELDS_THRESHOLD_FOR_PRODUCT = 2;
 
     public ProductMenuState(ProductController productController) {
         this.productController = productController;
@@ -48,13 +49,18 @@ public class ProductMenuState extends MenuState {
     }
 
     private void addNewProductOption() {
-        String name = defineProductName(BLANK_INPUT_NOT_ALLOWED);
-        showEnumTypes(ProductType.class);
-        int typeNumber = defineLegitEnumTypeNumber(ProductType.class, ZERO_NOT_ALLOWED);
-        ProductType type = ProductType.values()[typeNumber - 1];
-        double price = defineProductPrice(BLANK_INPUT_NOT_ALLOWED);
-        int amount = defineAmountInStock(BLANK_INPUT_NOT_ALLOWED);
-        Product product = new Product(name, type, price, amount);
+        Product product = new Product();
+        setProductFields(product, BLANK_INPUT_NOT_ALLOWED, ZERO_NOT_ALLOWED);
+        if (validateObjectFieldsNonNull(product, NULL_FIELDS_THRESHOLD_FOR_PRODUCT)) {
+            System.out.println("Invalid product");
+            reportOperationFailed();
+            return;
+        }
+        if(existsInDb(product)) {
+            reportOperationFailed();
+            return;
+        }
+        showFormattedProduct(product);
         System.out.print("Save product in the DataBase? ");
         if (userConfirms()) {
             productController.addNewProductToDB(product);
@@ -73,26 +79,7 @@ public class ProductMenuState extends MenuState {
         }
         System.out.print("Product selected for update: ");
         showFormattedProduct(product);
-        System.out.println("Enter new data. Leave field blank (or use 0 in case of " +
-                           "Type) to leave values unchanged.");
-        String newName = defineProductName(BLANK_INPUT_ALLOWED);
-        if (!newName.isBlank()) {
-            product.setName(newName);
-        }
-        System.out.print("(0) <ORIGINAL TYPE> ");
-        showEnumTypes(ProductType.class);
-        int newTypeNumber = defineLegitEnumTypeNumber(ProductType.class, ZERO_ALLOWED);
-        if (newTypeNumber != 0) {
-            product.setType(ProductType.values()[newTypeNumber - 1]);
-        }
-        double newPrice = defineProductPrice(BLANK_INPUT_ALLOWED);
-        if (newPrice != BLANK_INPUT_MARKER) {
-            product.setPrice(newPrice);
-        }
-        int newAmount = defineAmountInStock(BLANK_INPUT_ALLOWED);
-        if (newAmount != BLANK_INPUT_MARKER) {
-            product.setAmount(newAmount);
-        }
+        setProductFields(product, BLANK_INPUT_ALLOWED, ZERO_ALLOWED);
         showFormattedProduct(product);
         System.out.print("Proceed with update? ");
         if (userConfirms()) {
@@ -123,6 +110,64 @@ public class ProductMenuState extends MenuState {
 
     protected void returnToPreviousMenuOption() {
         productController.returnToPreviousMenu();
+    }
+
+    private void setProductFields(Product product, boolean allowBlank,
+                                     boolean allowZero) {
+        int input;
+        do {
+            System.out.println("\nChoose attribute: ");
+            System.out.print("(1) Name");
+            menuDisplayAttribute(product.getName());
+            System.out.print("(2) Type");
+            menuDisplayAttribute(product.getType());
+            System.out.print("(3) Price per piece");
+            if (Objects.nonNull(product.getPrice())) {
+                System.out.printf(" <%.2f>\n", product.getPrice());
+            } else {
+                System.out.println();
+            }
+            System.out.print("(4) Amount in stock");
+            menuDisplayAttribute(product.getAmount());
+            System.out.println("(0) Finish");
+            System.out.print("> ");
+            input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
+            switch (input) {
+                case 1:
+                    String newName = defineProductName(allowBlank);
+                    if (!newName.isBlank()) {
+                        product.setName(newName);
+                    }
+                    break;
+                case 2:
+                    if (allowZero) {
+                        System.out.print("(0) <ORIGINAL TYPE> ");
+                    }
+                    showEnumTypes(ProductType.class);
+                    int newTypeNumber = defineLegitEnumTypeNumber(
+                            ProductType.class, allowZero);
+                    if (newTypeNumber != 0) {
+                        product.setType(ProductType.values()[newTypeNumber - 1]);
+                    }
+                    break;
+                case 3:
+                    double newPrice = defineProductPrice(allowBlank);
+                    if (newPrice != BLANK_INPUT_MARKER) {
+                        product.setPrice(newPrice);
+                    }
+                    break;
+                case 4:
+                    int newAmount = defineAmountInStock(allowBlank);
+                    if (newAmount != BLANK_INPUT_MARKER) {
+                        product.setAmount(newAmount);
+                    }
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+            }
+        } while (input != 0);
     }
 
     private String defineProductName(boolean allowBlank) {
@@ -171,5 +216,15 @@ public class ProductMenuState extends MenuState {
             }
         } while (!legitInput);
         return amount;
+    }
+
+    private boolean existsInDb(Product product) {
+        Product searchResult = productController.findProductByNameAndType(product);
+        if (Objects.nonNull(searchResult)) {
+            System.out.println("Product with such name and Type combination already " +
+                               "exists in the DataBase on ID = " + searchResult.getId() +
+                               ". Try updating that one instead.");
+        }
+        return Objects.nonNull(productController.findProductByNameAndType(product));
     }
 }

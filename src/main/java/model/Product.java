@@ -26,7 +26,7 @@ public class Product {
 
     @Column
     @NotNull
-    private int amount;
+    private Integer amount;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
@@ -74,11 +74,11 @@ public class Product {
         this.price = price;
     }
 
-    public int getAmount() {
+    public Integer getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(Integer amount) {
         this.amount = amount;
     }
 

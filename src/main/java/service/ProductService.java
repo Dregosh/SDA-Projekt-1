@@ -1,13 +1,18 @@
 package service;
 
+import model.Customer;
 import model.Product;
 import model.ProductType;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import util.HibernateUtil;
 
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +88,29 @@ public class ProductService {
             e.printStackTrace();
         }
         return products;
+    }
+
+    public Product findProductByNameAndType(Product product) {
+        Product result = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Product> criteriaQuery =
+                    criteriaBuilder.createQuery(Product.class);
+            Root<Product> root = criteriaQuery.from(Product.class);
+            Predicate[] predicates = new Predicate[2];
+            predicates[0] = criteriaBuilder.equal(root.get("name"), product.getName());
+            predicates[1] = criteriaBuilder.equal(root.get("type"), product.getType());
+            criteriaQuery.select(root).where(predicates);
+            try {
+                Query<Product> query = session.createQuery(criteriaQuery);
+                result = query.getSingleResult();
+            } catch (NoResultException e) {
+                return null;
+            }
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public List<Product> findAllProducts() {
