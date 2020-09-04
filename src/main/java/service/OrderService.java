@@ -2,6 +2,7 @@ package service;
 
 import model.Order;
 import model.OrderItem;
+import model.Product;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import util.HibernateUtil;
@@ -19,6 +20,14 @@ public class OrderService {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.save(order);
+            order.getOrderItems().forEach(
+                    orderItem -> {
+                        Product product = session.find(
+                                Product.class, orderItem.getProduct().getId());
+                        product.setAmount(
+                                product.getAmount() - orderItem.getSalesAmount());
+                    }
+            );
             transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();

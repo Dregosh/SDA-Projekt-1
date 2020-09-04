@@ -11,6 +11,7 @@ public class OrderMenuState extends MenuState {
     private final OrderController orderController;
     private final ProductController productController;
     public static final int DISCOUNT_THRESHOLD = 15;
+    public static final int NULL_FIELDS_THRESHOLD_FOR_ORDER = 1;
 
     public OrderMenuState(OrderController orderController,
                           ProductController productController) {
@@ -48,12 +49,13 @@ public class OrderMenuState extends MenuState {
 
     private void createNewOrderOption() {
         Order order = new Order();
-        System.out.print("SET ORDER DATE: ");
-        order.setOrderDate(defineDate());
-        order.setCustomer(defineCustomer());
-        order.setStatus(defineStatus());
-        System.out.print("SET PAYMENT DATE: ");
-        order.setPaymentDate(defineDate());
+        setOrderFields(order, BLANK_INPUT_NOT_ALLOWED, ZERO_NOT_ALLOWED);
+        if (validateObjectFieldsNonNull(order, NULL_FIELDS_THRESHOLD_FOR_ORDER) ||
+            order.getOrderItems().size() == 0) {
+            System.out.println("Invalid order");
+            reportOperationFailed();
+            return;
+        }
         showFormatterOrder(order);
         System.out.print("Save order in the DataBase? ");
         if (userConfirms()) {
@@ -62,11 +64,62 @@ public class OrderMenuState extends MenuState {
         } else {
             reportOperationCancelled();
         }
-        if (Objects.nonNull(order.getId())) {
-            while (promptUserForOrderItemInsert()) {
-                addNewOrderItem(order);
+    }
+
+    private void setOrderFields(Order order, boolean allowBlank, boolean allowZero) {
+        int input;
+        do {
+            System.out.println("\nChoose attribute:");
+            System.out.print("(1) Order date: ");
+            menuDisplayAttribute(order.getOrderDate());
+            System.out.print("(2) Customer: ");
+            if (Objects.nonNull(order.getCustomer())) {
+                showFormattedCustomer(order.getCustomer());
+            } else {
+                System.out.println();
             }
-        }
+            System.out.print("(3) Status: ");
+            menuDisplayAttribute(order.getStatus());
+            System.out.print("(4) Payment date: ");
+            menuDisplayAttribute(order.getPaymentDate());
+            System.out.println("(5) Items: ");
+            if (order.getOrderItems().size() > 0) {
+                for (OrderItem item : order.getOrderItems()) {
+                    showFormattedOrderItem(item);
+                }
+            } else {
+                System.out.println("\t<order contains zero items>");
+            }
+            System.out.println("(0) Finish");
+            System.out.print("> ");
+            input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
+            switch (input) {
+                case 1:
+                    System.out.print("SET ORDER DATE: ");
+                    order.setOrderDate(defineDate());
+                    break;
+                case 2:
+                    order.setCustomer(defineCustomer());
+                    break;
+                case 3:
+                    order.setStatus(defineStatus());
+                    break;
+                case 4:
+                    System.out.print("SET PAYMENT DATE: ");
+                    order.setPaymentDate(defineDate());
+                    break;
+                case 5:
+                    OrderItem orderItem = createNewOrderItem(order);
+                    if (Objects.nonNull(orderItem)) {
+                        order.getOrderItems().add(orderItem);
+                    }
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+            }
+        } while (input != 0);
     }
 
     private LocalDate defineDate() {
@@ -81,8 +134,8 @@ public class OrderMenuState extends MenuState {
                            "persisted in DB under the ID #01>");
         Customer customer = new Customer();
         customer.setId(1L);
-        customer.setLastName("Agrestecki");
-        customer.setFirstName("Sebastian");
+        customer.setLastName("<cust-lastName>");
+        customer.setFirstName("<cust-firstName>");
         return customer;
     }
 
@@ -93,19 +146,17 @@ public class OrderMenuState extends MenuState {
         return OrderStatus.values()[typeNumber - 1];
     }
 
-    private boolean promptUserForOrderItemInsert() {
-        System.out.print("Add new Item to the current Order? [Y/N] ");
-        return "Y".equals(in.nextLine().toUpperCase());
-    }
-
-    private void addNewOrderItem(Order order) {
+    private OrderItem createNewOrderItem(Order order) {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrder(order);
         productController.toProductSelectionMenu();
         Product product = productController.getModelProduct();
-        if (Objects.isNull(product)) {
+        if (Objects.isNull(product) || product.getAmount() == 0) {
+            if (product.getAmount() == 0) {
+                System.out.println("Product is currently out of stock");
+            }
             reportOperationCancelled();
-            return;
+            return null;
         }
         orderItem.setProduct(product);
         int salesAmount = defineOrderItemSalesAmount(product, BLANK_INPUT_NOT_ALLOWED);
@@ -114,18 +165,11 @@ public class OrderMenuState extends MenuState {
         orderItem.setDiscountPercent(defineOrderItemSalesDiscount(
                 product, DISCOUNT_THRESHOLD, BLANK_INPUT_NOT_ALLOWED));
         double salesPrice = product.getPrice() *
-                            ((double)(100 - orderItem.getDiscountPercent()) / 100);
+                            ((double) (100 - orderItem.getDiscountPercent()) / 100);
         System.out.printf("SALES PRICE: %.2f\n", salesPrice);
         orderItem.setSalesPrice(salesPrice);
         showFormattedOrderItem(orderItem);
-        System.out.print("Add this Item to the Order and save it in the DataBase? ");
-        if (userConfirms()) {
-            orderController.addNewOrderItemToDB(orderItem);
-            productController.updateProductInDB(product);
-            reportOperationSuccessful();
-        } else {
-            reportOperationCancelled();
-        }
+        return orderItem;
     }
 
     private int defineOrderItemSalesAmount(Product product, boolean allowBlank) {

@@ -2,6 +2,7 @@ package controller;
 
 import model.Order;
 import model.OrderItem;
+import model.Product;
 import service.OrderService;
 import view.MenuState;
 
