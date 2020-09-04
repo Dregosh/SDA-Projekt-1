@@ -48,7 +48,7 @@ public class CustomerMenuState extends MenuState {
     private void addNewCustomerOption() {
         Customer customer = new Customer();
         setCustomerFields(customer);
-        if (hasMoreThanOneNull(customer)) {
+        if (validateObjectFieldsNonNull(customer, 2)) {
             System.out.println("Invalid customer");
             reportOperationFailed();
             return;
@@ -207,21 +207,6 @@ public class CustomerMenuState extends MenuState {
 
     private void invalidValueWarning(String attributeName) {
         System.out.println("WARNING: " + attributeName + " cannot be left empty");
-    }
-
-    private boolean hasMoreThanOneNull(Customer customer) {
-        List<String> nullFields = new LinkedList<>();
-        for (Field f : customer.getClass().getDeclaredFields()) {
-            f.setAccessible(true);
-            try {
-                if (Objects.isNull(f.get(customer))) {
-                    nullFields.add(f.getName());
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        return nullFields.size() > 1;
     }
 
     private void showCustomerBeforeAdd(Customer customer) {
