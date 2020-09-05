@@ -2,7 +2,6 @@ package controller;
 
 import model.Order;
 import model.OrderItem;
-import model.Product;
 import service.OrderService;
 import view.MenuState;
 
@@ -12,19 +11,19 @@ import java.util.List;
 public class OrderController {
     private final Deque<MenuState> states;
     private final OrderService orderService;
-    private List<OrderItem> orderItems;
+    private List<OrderItem> modelOrderItems;
 
     public OrderController(Deque<MenuState> states) {
         this.states = states;
         this.orderService = new OrderService();
     }
 
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
+    public List<OrderItem> getModelOrderItems() {
+        return modelOrderItems;
     }
 
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
+    public void setModelOrderItems(List<OrderItem> modelOrderItems) {
+        this.modelOrderItems = modelOrderItems;
     }
 
     public void addNewOrderToDB(Order order) {
