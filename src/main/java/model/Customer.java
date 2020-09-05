@@ -3,6 +3,7 @@ package model;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "customers")
@@ -34,9 +35,19 @@ public class Customer {
     private String addressCity;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
 
     public Customer() {
+    }
+
+    public Customer(String lastName, String firstName, String street, String code,
+                    String city) {
+        this();
+        this.setLastName(lastName);
+        this.setFirstName(firstName);
+        this.setAddressStreet(street);
+        this.setAddressPostalCode(code);
+        this.setAddressCity(city);
     }
 
     public Long getId() {

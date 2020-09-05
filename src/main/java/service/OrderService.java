@@ -12,20 +12,19 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class OrderService {
     Transaction transaction = null;
 
-    public void addOrUpdateOrder(Order order) {
+    public void addOrUpdateOrder(Order order, Map<Long, Integer> deltaMap) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.saveOrUpdate(order);
-            order.getOrderItems().forEach(
-                    orderItem -> {
-                        Product product = session.find(
-                                Product.class, orderItem.getProduct().getId());
-                        product.setAmount(
-                                product.getAmount() - orderItem.getSalesAmount());
+            deltaMap.entrySet().forEach(
+                    entry -> {
+                        Product product = session.find(Product.class, entry.getKey());
+                        product.setAmount(product.getAmount() + entry.getValue());
                     }
             );
             transaction.commit();

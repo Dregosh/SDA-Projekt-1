@@ -155,21 +155,15 @@ public class CustomerService {
     }
 
     public void initialCustomers() {
-        Customer customer = new Customer();
-        customer.setLastName("Kowalski");
-        customer.setFirstName("Jan");
-        customer.setAddressStreet("Ujazdowskie");
-        customer.setAddressPostalCode("00-500");
-        customer.setAddressCity("Warszawa");
-        add(customer);
-
-        Customer customer1 = new Customer();
-        customer1.setLastName("Burak");
-        customer1.setFirstName("Stefan");
-        customer1.setAddressStreet("Puławska");
-        customer1.setAddressPostalCode("00-100");
-        customer1.setAddressCity("Kraków");
-        add(customer1);
+        List<Customer> customers = List.of(
+                new Customer("Kowalski", "Jan", "Al. Ujazdowskie", "00-500", "Warszawa"),
+                new Customer("Burak", "Stefan", "Puławska", "00-100", "Kraków"),
+                new Customer("Zembrzuski", "Adrian", "Głęboka", "22-445", "Katowice"),
+                new Customer("Kijanowska", "Agata", "Żabia", "05-174", "Międzyzdroje"),
+                new Customer("Bilski", "Jakub", "Mazowiecka", "35-544", "Grabowo")
+        );
+        for (Customer c : customers) {
+            add(c);
+        }
     }
-
 }

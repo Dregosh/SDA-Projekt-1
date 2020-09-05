@@ -6,12 +6,14 @@ import controller.ProductController;
 import model.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class OrderMenuState extends MenuState {
-    private final OrderController orderController;
-    private final ProductController productController;
-    private final CustomerController customerController;
+    protected final OrderController orderController;
+    protected final ProductController productController;
+    protected final CustomerController customerController;
     public static final int DISCOUNT_THRESHOLD = 15;
     public static final int NULL_FIELDS_THRESHOLD_FOR_ORDER = 1;
 
@@ -29,7 +31,7 @@ public class OrderMenuState extends MenuState {
         System.out.println("(1) Show all orders in the DataBase");
         System.out.println("(2) Find orders of a chosen Customer");
         System.out.println("(3) Create new order");
-        //System.out.println("(4) Edit existing order");
+        System.out.println("(4) Edit existing order");
         //other order-related options to be added here
         System.out.println("(0) Return to previous menu");
         System.out.print("> ");
@@ -44,9 +46,9 @@ public class OrderMenuState extends MenuState {
             case 3:
                 createOrEditOrderOption(new Order());
                 break;
-//            case 4:
-//                editExistingOrderOption();
-//                break;
+            case 4:
+                editExistingOrderOption();
+                break;
             case 0:
                 returnToPreviousMenuOption();
                 break;
@@ -56,17 +58,22 @@ public class OrderMenuState extends MenuState {
     }
 
     private void createOrEditOrderOption(Order order) {
+        orderController.setModelDeltaMap(new HashMap<>());
+        for (OrderItem item : order.getOrderItems()) {
+            orderController.getModelDeltaMap().put(item.getProduct().getId(), 0);
+        }
         setOrderFields(order);
         if (validateObjectFieldsNonNull(order, NULL_FIELDS_THRESHOLD_FOR_ORDER) ||
             order.getOrderItems().size() == 0) {
             System.out.println("Invalid order");
+            orderController.setModelDeltaMap(null);
             reportOperationFailed();
             return;
         }
         showFormatterOrder(order);
         System.out.print("Save changes in the DataBase? ");
         if (userConfirms()) {
-            orderController.addOrUpdateOrderInDB(order);
+            orderController.addOrUpdateOrderInDB(order);    //tu delta
             reportOperationSuccessful();
         } else {
             reportOperationCancelled();
@@ -76,7 +83,6 @@ public class OrderMenuState extends MenuState {
     private void editExistingOrderOption() {
         Order order = defineOrderForContext();
         if (Objects.nonNull(order)) {
-            setOrderFields(order);
             createOrEditOrderOption(order);
         }
     }
@@ -125,7 +131,6 @@ public class OrderMenuState extends MenuState {
                     order.setOrderDate(defineDate());
                     break;
                 case 2:
-                    //Selection of other customer to be implemented here..
                     order.setCustomer(defineCustomer());
                     break;
                 case 3:
@@ -136,20 +141,7 @@ public class OrderMenuState extends MenuState {
                     order.setPaymentDate(defineDate());
                     break;
                 case 5:
-                    OrderItem orderItem = createNewOrderItem(order);
-                    if (Objects.nonNull(orderItem)) {
-                        int index = -1;
-                        for (OrderItem oi : order.getOrderItems()) {
-                            if (oi.getProduct().getName().equals(orderItem.getProduct().getName())) {
-                                index = order.getOrderItems().indexOf(oi);
-                            }
-                        }
-                        if (index != -1) {
-                            order.getOrderItems().set(index, orderItem);
-                        } else {
-                            order.getOrderItems().add(orderItem);
-                        }
-                    }
+                    orderController.toOrderItemMenu(order);
                     break;
                 case 0:
                     break;
@@ -179,71 +171,6 @@ public class OrderMenuState extends MenuState {
         showEnumTypes(OrderStatus.class);
         int typeNumber = defineLegitEnumTypeNumber(OrderStatus.class, ZERO_NOT_ALLOWED);
         return OrderStatus.values()[typeNumber - 1];
-    }
-
-    private OrderItem createNewOrderItem(Order order) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrder(order);
-        productController.toProductSelectionMenu();
-        Product product = productController.getModelProduct();
-        if (Objects.isNull(product) || product.getAmount() == 0) {
-            if (Objects.nonNull(product) && product.getAmount() == 0) {
-                System.out.println("Product is currently out of stock");
-            }
-            reportOperationCancelled();
-            return null;
-        }
-        orderItem.setProduct(product);
-        int salesAmount = defineOrderItemSalesAmount(product, BLANK_INPUT_NOT_ALLOWED);
-        product.setAmount(product.getAmount() - salesAmount);
-        orderItem.setSalesAmount(salesAmount);
-        orderItem.setDiscountPercent(defineOrderItemSalesDiscount(
-                product, DISCOUNT_THRESHOLD, BLANK_INPUT_NOT_ALLOWED));
-        double salesPrice = product.getPrice() *
-                            ((double) (100 - orderItem.getDiscountPercent()) / 100);
-        System.out.printf("SALES PRICE: %.2f\n", salesPrice);
-        orderItem.setSalesPrice(salesPrice);
-        showFormattedOrderItem(orderItem);
-        return orderItem;
-    }
-
-    private int defineOrderItemSalesAmount(Product product, boolean allowBlank) {
-        boolean legitInput;
-        int salesAmount;
-        do {
-            System.out.print("SALES AMOUNT: enter sales amount (min = 1, " +
-                             "max = " + product.getAmount() + "): ");
-            salesAmount = (int) requestNumberInput(allowBlank);
-            if (salesAmount == BLANK_INPUT_MARKER && allowBlank) {
-                return BLANK_INPUT_MARKER;
-            }
-            legitInput = (salesAmount > 0 && salesAmount <= product.getAmount());
-            if (!legitInput) {
-                System.out.println("Amount not within given range");
-            }
-        } while (!legitInput);
-        return salesAmount;
-    }
-
-    private Integer defineOrderItemSalesDiscount(
-            Product product, int discountThreshold, boolean allowBlank) {
-        boolean legitInput;
-        int salesDiscount;
-        System.out.println("DISCOUNT %: enter discount in range [0, " +
-                           discountThreshold + "]%  (0 will leave original product " +
-                           "price = " + product.getPrice() + "): ");
-        do {
-            System.out.print("> ");
-            salesDiscount = (int) requestNumberInput(allowBlank);
-            if (salesDiscount == BLANK_INPUT_MARKER && allowBlank) {
-                return BLANK_INPUT_MARKER;
-            }
-            legitInput = (salesDiscount >= 0 && salesDiscount <= discountThreshold);
-            if (!legitInput) {
-                System.out.println("Discount not within given range");
-            }
-        } while (!legitInput);
-        return salesDiscount;
     }
 
     private void showAllOrdersInDBOption() {
