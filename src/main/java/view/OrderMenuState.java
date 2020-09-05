@@ -29,7 +29,7 @@ public class OrderMenuState extends MenuState {
         System.out.println("(1) Show all orders in the DataBase");
         System.out.println("(2) Find orders of a chosen Customer");
         System.out.println("(3) Create new order");
-        System.out.println("(4) Edit existing order");
+        //System.out.println("(4) Edit existing order");
         //other order-related options to be added here
         System.out.println("(0) Return to previous menu");
         System.out.print("> ");
@@ -44,9 +44,9 @@ public class OrderMenuState extends MenuState {
             case 3:
                 createOrEditOrderOption(new Order());
                 break;
-            case 4:
-                editExistingOrderOption();
-                break;
+//            case 4:
+//                editExistingOrderOption();
+//                break;
             case 0:
                 returnToPreviousMenuOption();
                 break;
