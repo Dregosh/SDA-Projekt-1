@@ -152,7 +152,7 @@ public class OrderMenuState extends MenuState {
         productController.toProductSelectionMenu();
         Product product = productController.getModelProduct();
         if (Objects.isNull(product) || product.getAmount() == 0) {
-            if (product.getAmount() == 0) {
+            if (Objects.nonNull(product) && product.getAmount() == 0) {
                 System.out.println("Product is currently out of stock");
             }
             reportOperationCancelled();
