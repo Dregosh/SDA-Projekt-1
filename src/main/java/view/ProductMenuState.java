@@ -112,7 +112,7 @@ public class ProductMenuState extends MenuState {
         productController.returnToPreviousMenu();
     }
 
-    private void setProductFields(Product product, boolean allowBlank,
+    public void setProductFields(Product product, boolean allowBlank,
                                      boolean allowZero) {
         int input;
         do {
@@ -170,7 +170,7 @@ public class ProductMenuState extends MenuState {
         } while (input != 0);
     }
 
-    private String defineProductName(boolean allowBlank) {
+    public String defineProductName(boolean allowBlank) {
         String productName = "";
         while (productName.isBlank()) {
             System.out.print("Enter product name: ");
@@ -184,7 +184,7 @@ public class ProductMenuState extends MenuState {
         return productName;
     }
 
-    private double defineProductPrice(boolean allowBlank) {
+    public double defineProductPrice(boolean allowBlank) {
         boolean legitInput;
         double prodPrice;
         do {
@@ -201,7 +201,7 @@ public class ProductMenuState extends MenuState {
         return prodPrice;
     }
 
-    private int defineAmountInStock(boolean allowBlank) {
+    public int defineAmountInStock(boolean allowBlank) {
         boolean legitInput;
         int amount;
         do {
