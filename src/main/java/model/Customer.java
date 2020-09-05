@@ -34,7 +34,8 @@ public class Customer {
     @NotNull
     private String addressCity;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer", cascade = CascadeType.ALL)
+    //fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
 
     public Customer() {

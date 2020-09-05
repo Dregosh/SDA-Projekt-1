@@ -21,7 +21,7 @@ public class OrderItemMenuState extends OrderMenuState {
 
     @Override
     public void show() {
-        System.out.println(orderController.getModelDeltaMap());
+        //System.out.println(orderController.getModelDeltaMap());
         System.out.println("\nORDER ITEMS");
         showNumberedOrderItemsList();
         System.out.println("OPTIONS: ");

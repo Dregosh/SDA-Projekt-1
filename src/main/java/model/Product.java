@@ -29,7 +29,8 @@ public class Product {
     @NotNull
     private Integer amount;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product", cascade = CascadeType.ALL)
+    //fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public Product() {

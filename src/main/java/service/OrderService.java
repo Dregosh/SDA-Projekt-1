@@ -15,18 +15,17 @@ import java.util.List;
 import java.util.Map;
 
 public class OrderService {
-    Transaction transaction = null;
+    private Session session = HibernateUtil.getSession();
+    private Transaction transaction = null;
 
     public void addOrUpdateOrder(Order order, Map<Long, Integer> deltaMap) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             transaction = session.beginTransaction();
             session.saveOrUpdate(order);
-            deltaMap.entrySet().forEach(
-                    entry -> {
-                        Product product = session.find(Product.class, entry.getKey());
-                        product.setAmount(product.getAmount() + entry.getValue());
-                    }
-            );
+            deltaMap.forEach((key, value) -> {
+                Product product = session.find(Product.class, key);
+                product.setAmount(product.getAmount() + value);
+            });
             transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,7 +33,7 @@ public class OrderService {
     }
 
     public void addOrderItem(OrderItem orderItem) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             transaction = session.beginTransaction();
             session.save(orderItem);
             transaction.commit();
@@ -45,7 +44,7 @@ public class OrderService {
 
     public List<Order> findAllOrders() {
         List<Order> orders = new ArrayList<>();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Order> query = builder.createQuery(Order.class);
             Root<Order> root = query.from(Order.class);
@@ -59,7 +58,7 @@ public class OrderService {
 
     public Order findOrderById(long id) {
         Order order = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             order = session.find(Order.class, id);
         } catch (Exception e) {
             e.printStackTrace();

@@ -17,7 +17,9 @@ public class Order {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL)
+    //fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,
+               orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @Column(name = "order_date", nullable = false)

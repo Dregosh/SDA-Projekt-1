@@ -1,5 +1,6 @@
 package controller;
 
+import util.HibernateUtil;
 import view.CustomerMenuState;
 import view.MainMenuState;
 import view.MenuState;
@@ -43,5 +44,6 @@ public class MainController {
 
     public void exitProgram() {
         states.pop();
+        HibernateUtil.closeSession();
     }
 }

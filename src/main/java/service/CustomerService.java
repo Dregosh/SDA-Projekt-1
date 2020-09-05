@@ -17,10 +17,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class CustomerService {
+    private Session session = HibernateUtil.getSession();
+    private Transaction transaction = null;
 
     public void add(Customer customer) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        transaction = null;
+        try {
             transaction = session.beginTransaction();
             session.save(customer);
             transaction.commit();
@@ -34,7 +36,7 @@ public class CustomerService {
 
     public Customer findById(Long id) {
         Customer customer = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
@@ -53,7 +55,7 @@ public class CustomerService {
 
     public List<Customer> findByFullName(String lastName, String firstName) {
         List<Customer> customers = new ArrayList<>();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
@@ -71,7 +73,7 @@ public class CustomerService {
 
     public Customer findByAllButId(Customer customer) {
         Customer result = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
@@ -96,7 +98,7 @@ public class CustomerService {
 
     public List<Customer> findAllCustomers() {
         List<Customer> customers = new ArrayList<>();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
@@ -111,7 +113,7 @@ public class CustomerService {
 
     public void update(Customer customer) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             transaction = session.beginTransaction();
             session.update(customer);
             transaction.commit();
@@ -125,7 +127,7 @@ public class CustomerService {
 
     public void delete(Long id) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             transaction = session.beginTransaction();
             Customer customer = findById(id);
             if (Objects.nonNull(customer)) {
@@ -142,7 +144,7 @@ public class CustomerService {
 
     public void delete(Customer customer) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try {
             transaction = session.beginTransaction();
             session.delete(customer);
             transaction.commit();
