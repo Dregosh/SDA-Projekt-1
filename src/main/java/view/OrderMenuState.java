@@ -129,7 +129,6 @@ public class OrderMenuState extends MenuState {
                     order.setCustomer(defineCustomer());
                     break;
                 case 3:
-                    System.out.println("SET ORDER STATUS: ");
                     order.setStatus(defineStatus());
                     break;
                 case 4:
@@ -139,7 +138,17 @@ public class OrderMenuState extends MenuState {
                 case 5:
                     OrderItem orderItem = createNewOrderItem(order);
                     if (Objects.nonNull(orderItem)) {
-                        order.getOrderItems().add(orderItem);
+                        int index = -1;
+                        for (OrderItem oi : order.getOrderItems()) {
+                            if (oi.getProduct().getName().equals(orderItem.getProduct().getName())) {
+                                index = order.getOrderItems().indexOf(oi);
+                            }
+                        }
+                        if (index != -1) {
+                            order.getOrderItems().set(index, orderItem);
+                        } else {
+                            order.getOrderItems().add(orderItem);
+                        }
                     }
                     break;
                 case 0:
@@ -168,7 +177,7 @@ public class OrderMenuState extends MenuState {
     private OrderStatus defineStatus() {
         System.out.print("SET ORDER STATUS: ");
         showEnumTypes(OrderStatus.class);
-        int typeNumber = defineLegitEnumTypeNumber(OrderStatus.class, ZERO_ALLOWED);
+        int typeNumber = defineLegitEnumTypeNumber(OrderStatus.class, ZERO_NOT_ALLOWED);
         return OrderStatus.values()[typeNumber - 1];
     }
 
