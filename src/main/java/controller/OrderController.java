@@ -26,6 +26,10 @@ public class OrderController {
         orderService.addOrderItem(orderItem);
     }
 
+    public Order findOrderById(long id) {
+        return orderService.findOrderById(id);
+    }
+
     public List<Order> findAllOrders() {
         return orderService.findAllOrders();
     }

@@ -57,4 +57,14 @@ public class OrderService {
         }
         return orders;
     }
+
+    public Order findOrderById(long id) {
+        Order order = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            order = session.find(Order.class, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return order;
+    }
 }
