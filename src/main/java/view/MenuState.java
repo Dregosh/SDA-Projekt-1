@@ -23,8 +23,10 @@ public abstract class MenuState {
     protected static final int BLANK_INPUT_MARKER = -1;
     protected static final String PRODUCT_INFO_FMT =
             "(#%02d) %-20s| %-12s| %-9.2f| %-2d pc(s)\n";
+    protected static final String CUSTOMER_LABEL_FMT =
+            "ID %-2s | Last name %-6s | First name %-5s | Street %-13s | Postal code | City\n";
     protected static final String CUSTOMER_INFO_FMT =
-            "(#%02d) %-16s | %-16s | %-20s | %-7s | %s\n";
+            "(#%02d) | %-16s | %-16s | %-20s | %-11s | %s\n";
     protected static final String ORDER_INFO_FMT =
             "Order #%d (%s %s), placed on: %s, status: %s, paid on: %s\n";
     protected static final String ITEMS_INFO_FMT =
@@ -119,8 +121,9 @@ public abstract class MenuState {
     }
 
     protected void showFormattedCustomer(Customer customer) {
-        System.out.printf(CUSTOMER_INFO_FMT, customer.getId(), customer.getLastName(), customer.getFirstName(),
+        String formattedCustomer = String.format(CUSTOMER_INFO_FMT, customer.getId(), customer.getLastName(), customer.getFirstName(),
                 customer.getAddressStreet(), customer.getAddressPostalCode(), customer.getAddressCity());
+        System.out.print(formattedCustomer);
     }
 
     public void showFormatterOrder(Order order) {
@@ -216,5 +219,13 @@ public abstract class MenuState {
     protected boolean userConfirms() {
         System.out.print("Press 'Y' to confirm: ");
         return "Y".equals(in.nextLine().toUpperCase());
+    }
+
+    private void separatorLine(String string) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 1; i < string.length(); i++) {
+            stringBuilder.append("=");
+        }
+        System.out.println(stringBuilder.toString());
     }
 }

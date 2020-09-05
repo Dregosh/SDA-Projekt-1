@@ -3,6 +3,7 @@ package controller;
 import model.Customer;
 import service.CustomerService;
 import view.CustomerBrowserMenuState;
+import view.CustomerOrderMenuState;
 import view.CustomerSelectionMenuState;
 import view.MenuState;
 
@@ -47,6 +48,15 @@ public class CustomerController {
         modelCustomer = null;
         int loopMarker = states.size();
         states.push(new CustomerSelectionMenuState(this));
+        while (loopMarker < states.size()) {
+            states.getFirst().show();
+        }
+    }
+
+    public void toCustomerOrderMenu() {
+        modelCustomer = null;
+        int loopMarker = states.size();
+        states.push(new CustomerOrderMenuState(this));
         while (loopMarker < states.size()) {
             states.getFirst().show();
         }

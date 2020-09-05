@@ -1,5 +1,6 @@
 package view;
 
+import controller.CustomerController;
 import controller.OrderController;
 import controller.ProductController;
 import model.*;
@@ -10,13 +11,16 @@ import java.util.Objects;
 public class OrderMenuState extends MenuState {
     private final OrderController orderController;
     private final ProductController productController;
+    private final CustomerController customerController;
     public static final int DISCOUNT_THRESHOLD = 15;
     public static final int NULL_FIELDS_THRESHOLD_FOR_ORDER = 1;
 
     public OrderMenuState(OrderController orderController,
-                          ProductController productController) {
+                          ProductController productController,
+                          CustomerController customerController) {
         this.orderController = orderController;
         this.productController = productController;
+        this.customerController = customerController;
     }
 
     @Override
@@ -129,13 +133,12 @@ public class OrderMenuState extends MenuState {
     }
 
     private Customer defineCustomer() {
-        //customer selection logic to be implemented here..
-        System.out.println("SET CUSTOMER: <using hardcoded Customer supposedly " +
-                           "persisted in DB under the ID #01>");
-        Customer customer = new Customer();
-        customer.setId(1L);
-        customer.setLastName("<cust-lastName>");
-        customer.setFirstName("<cust-firstName>");
+        customerController.toCustomerOrderMenu();
+        Customer customer = customerController.getModelCustomer();
+        if (Objects.isNull(customer)) {
+            System.out.println("Invalid customer");
+            return null;
+        }
         return customer;
     }
 

@@ -12,11 +12,13 @@ import java.util.Deque;
 public class MainController {
     private final Deque<MenuState> states;
     private final ProductController productController;
+    private final CustomerController customerController;
     private final OrderController orderController;
 
     public MainController() {
         this.states = new ArrayDeque<>();
         this.productController = new ProductController(states);
+        this.customerController = new CustomerController(states);
         this.orderController = new OrderController(states);
     }
 
@@ -36,7 +38,7 @@ public class MainController {
     }
 
     public void toOrderMenu() {
-        states.push(new OrderMenuState(orderController, productController));
+        states.push(new OrderMenuState(orderController, productController, customerController));
     }
 
     public void exitProgram() {

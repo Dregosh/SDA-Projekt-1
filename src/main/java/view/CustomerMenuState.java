@@ -45,26 +45,28 @@ public class CustomerMenuState extends MenuState {
         }
     }
 
-    private void addNewCustomerOption() {
+    protected Customer addNewCustomerOption() {
         Customer customer = new Customer();
         setCustomerFields(customer);
         if (validateObjectFieldsNonNull(customer, 2)) {
             System.out.println("Invalid customer");
             reportOperationFailed();
-            return;
+            return null;
         }
         if(existsInDb(customer)) {
             System.out.println("Customer already exists");
             reportOperationFailed();
-            return;
+            return null;
         }
         showCustomerBeforeAdd(customer);
         System.out.print("Save customer in the DataBase? ");
         if (userConfirms()) {
             customerController.addNewCustomer(customer);
             reportOperationSuccessful();
+            return customer;
         } else {
             reportOperationCancelled();
+            return null;
         }
     }
 
@@ -181,6 +183,29 @@ public class CustomerMenuState extends MenuState {
             }
         } while (input != 0);
         return modifiedCustomer;
+    }
+
+    protected void defineCustomerForContext() {
+        int input;
+        do {
+            System.out.println("Enter ID of the customer or 0 to cancel");
+            System.out.print("> ");
+            input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
+            if (input != 0) {
+                Customer customer = customerController.findCustomerById(input);
+                if (Objects.isNull(customer)) {
+                    System.out.println("Customer not found.");
+                } else {
+                    System.out.print("Selected: ");
+                    showFormattedCustomer(customer);
+                    if (userConfirms()) {
+                        customerController.setModelCustomer(customer);
+                        customerController.returnToPreviousMenu();
+                        return;
+                    }
+                }
+            }
+        } while (input != 0);
     }
 
     private String defineAttribute(boolean allowBlank, String attributeName) {
