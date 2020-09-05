@@ -2,7 +2,6 @@ package controller;
 
 import model.Order;
 import model.OrderItem;
-import model.Product;
 import service.OrderService;
 import view.MenuState;
 
@@ -18,8 +17,8 @@ public class OrderController {
         this.orderService = new OrderService();
     }
 
-    public void addNewOrderToDB(Order order) {
-        orderService.addOrder(order);
+    public void addOrUpdateOrderInDB(Order order) {
+        orderService.addOrUpdateOrder(order);
     }
 
     public void addNewOrderItemToDB(OrderItem orderItem) {

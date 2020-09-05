@@ -38,7 +38,7 @@ public class OrderMenuState extends MenuState {
                 reportNotImplented();
                 break;
             case 3:
-                createNewOrderOption();
+                createOrEditOrderOption(new Order());
                 break;
             case 4:
                 editExistingOrderOption();
@@ -51,8 +51,7 @@ public class OrderMenuState extends MenuState {
         }
     }
 
-    private void createNewOrderOption() {
-        Order order = new Order();
+    private void createOrEditOrderOption(Order order) {
         setOrderFields(order);
         if (validateObjectFieldsNonNull(order, NULL_FIELDS_THRESHOLD_FOR_ORDER) ||
             order.getOrderItems().size() == 0) {
@@ -61,9 +60,9 @@ public class OrderMenuState extends MenuState {
             return;
         }
         showFormatterOrder(order);
-        System.out.print("Save order in the DataBase? ");
+        System.out.print("Save changes in the DataBase? ");
         if (userConfirms()) {
-            orderController.addNewOrderToDB(order);
+            orderController.addOrUpdateOrderInDB(order);
             reportOperationSuccessful();
         } else {
             reportOperationCancelled();
@@ -74,15 +73,7 @@ public class OrderMenuState extends MenuState {
         Order order = defineOrderForContext();
         if (Objects.nonNull(order)) {
             setOrderFields(order);
-            showFormatterOrder(order);
-        }
-        showFormatterOrder(order);
-        System.out.print("Update order in the DataBase? ");
-        if (userConfirms()) {
-            orderController.addNewOrderToDB(order);
-            reportOperationSuccessful();
-        } else {
-            reportOperationCancelled();
+            createOrEditOrderOption(order);
         }
     }
 

@@ -16,10 +16,10 @@ import java.util.List;
 public class OrderService {
     Transaction transaction = null;
 
-    public void addOrder(Order order) {
+    public void addOrUpdateOrder(Order order) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.save(order);
+            session.saveOrUpdate(order);
             order.getOrderItems().forEach(
                     orderItem -> {
                         Product product = session.find(
