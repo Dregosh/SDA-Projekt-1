@@ -26,12 +26,16 @@ public class OrderController {
         this.modelOrderItems = modelOrderItems;
     }
 
-    public void addNewOrderToDB(Order order) {
-        orderService.addOrder(order);
+    public void addOrUpdateOrderInDB(Order order) {
+        orderService.addOrUpdateOrder(order);
     }
 
     public void addNewOrderItemToDB(OrderItem orderItem) {
         orderService.addOrderItem(orderItem);
+    }
+
+    public Order findOrderById(long id) {
+        return orderService.findOrderById(id);
     }
 
     public List<Order> findAllOrders() {

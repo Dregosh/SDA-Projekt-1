@@ -29,6 +29,7 @@ public class OrderMenuState extends MenuState {
         System.out.println("(1) Show all orders in the DataBase");
         System.out.println("(2) Find orders of a chosen Customer");
         System.out.println("(3) Create new order");
+        System.out.println("(4) Edit existing order");
         //other order-related options to be added here
         System.out.println("(0) Return to previous menu");
         System.out.print("> ");
@@ -41,7 +42,10 @@ public class OrderMenuState extends MenuState {
                 reportNotImplented();
                 break;
             case 3:
-                createNewOrderOption();
+                createOrEditOrderOption(new Order());
+                break;
+            case 4:
+                editExistingOrderOption();
                 break;
             case 0:
                 returnToPreviousMenuOption();
@@ -51,9 +55,8 @@ public class OrderMenuState extends MenuState {
         }
     }
 
-    private void createNewOrderOption() {
-        Order order = new Order();
-        setOrderFields(order, BLANK_INPUT_NOT_ALLOWED, ZERO_NOT_ALLOWED);
+    private void createOrEditOrderOption(Order order) {
+        setOrderFields(order);
         if (validateObjectFieldsNonNull(order, NULL_FIELDS_THRESHOLD_FOR_ORDER) ||
             order.getOrderItems().size() == 0) {
             System.out.println("Invalid order");
@@ -61,16 +64,35 @@ public class OrderMenuState extends MenuState {
             return;
         }
         showFormatterOrder(order);
-        System.out.print("Save order in the DataBase? ");
+        System.out.print("Save changes in the DataBase? ");
         if (userConfirms()) {
-            orderController.addNewOrderToDB(order);
+            orderController.addOrUpdateOrderInDB(order);
             reportOperationSuccessful();
         } else {
             reportOperationCancelled();
         }
     }
 
-    private void setOrderFields(Order order, boolean allowBlank, boolean allowZero) {
+    private void editExistingOrderOption() {
+        Order order = defineOrderForContext();
+        if (Objects.nonNull(order)) {
+            setOrderFields(order);
+            createOrEditOrderOption(order);
+        }
+    }
+
+    private Order defineOrderForContext() {
+        System.out.print("Enter order ID: ");
+        long input = (long) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
+        Order order = orderController.findOrderById(input);
+        if (Objects.isNull(order)) {
+            System.out.println("Order not found");
+            reportOperationCancelled();
+        }
+        return order;
+    }
+
+    private void setOrderFields(Order order) {
         int input;
         do {
             System.out.println("\nChoose attribute:");
@@ -103,9 +125,11 @@ public class OrderMenuState extends MenuState {
                     order.setOrderDate(defineDate());
                     break;
                 case 2:
+                    //Selection of other customer to be implemented here..
                     order.setCustomer(defineCustomer());
                     break;
                 case 3:
+                    System.out.println("SET ORDER STATUS: ");
                     order.setStatus(defineStatus());
                     break;
                 case 4:
@@ -127,8 +151,7 @@ public class OrderMenuState extends MenuState {
     }
 
     private LocalDate defineDate() {
-        System.out.print("enter the date in format 'yyyy-mm-dd' " +
-                         "or leave field blank to use current date: ");
+        System.out.print("enter the date in format 'yyyy-mm-dd': ");
         return requestDateInput(BLANK_INPUT_ALLOWED);
     }
 
@@ -145,7 +168,7 @@ public class OrderMenuState extends MenuState {
     private OrderStatus defineStatus() {
         System.out.print("SET ORDER STATUS: ");
         showEnumTypes(OrderStatus.class);
-        int typeNumber = defineLegitEnumTypeNumber(OrderStatus.class, ZERO_NOT_ALLOWED);
+        int typeNumber = defineLegitEnumTypeNumber(OrderStatus.class, ZERO_ALLOWED);
         return OrderStatus.values()[typeNumber - 1];
     }
 
