@@ -12,10 +12,19 @@ import java.util.List;
 public class OrderController {
     private final Deque<MenuState> states;
     private final OrderService orderService;
+    private List<OrderItem> orderItems;
 
     public OrderController(Deque<MenuState> states) {
         this.states = states;
         this.orderService = new OrderService();
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 
     public void addNewOrderToDB(Order order) {

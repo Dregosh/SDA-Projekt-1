@@ -218,7 +218,7 @@ public class OrderMenuState extends MenuState {
         showFormattedOrders(orderController.findAllOrders());
     }
 
-    private void returnToPreviousMenuOption() {
+    protected void returnToPreviousMenuOption() {
         orderController.returnToPreviousMenu();
     }
 }
