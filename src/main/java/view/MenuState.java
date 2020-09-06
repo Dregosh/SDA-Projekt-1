@@ -20,6 +20,8 @@ public abstract class MenuState {
     protected static final boolean BLANK_INPUT_NOT_ALLOWED = false;
     protected static final boolean ZERO_ALLOWED = true;
     protected static final boolean ZERO_NOT_ALLOWED = false;
+    protected static final boolean REMOVED_ALLOWED = true;
+    protected static final boolean REMOVED_NOT_ALLOWED = false;
     protected static final int BLANK_INPUT_MARKER = -1;
     protected static final String PRODUCT_INFO_FMT =
             "(#%02d) %-20s| %-12s| %-9.2f| %-2d pc(s)\n";

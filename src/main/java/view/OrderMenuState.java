@@ -43,7 +43,7 @@ public class OrderMenuState extends MenuState {
                 showAllOrdersInDBOption();
                 break;
             case 2:
-                reportNotImplented();
+                showOrdersByCustomerOption();
                 break;
             case 3:
                 createOrEditOrderOption(new Order());
@@ -177,6 +177,12 @@ public class OrderMenuState extends MenuState {
 
     private void showAllOrdersInDBOption() {
         showFormattedOrders(orderController.findAllOrders());
+    }
+
+    private void showOrdersByCustomerOption() {
+        customerController.toCustomerSelectionMenu(REMOVED_ALLOWED);
+        Customer customer = customerController.getModelCustomer();
+        showFormattedOrders(orderController.findByCustomer(customer));
     }
 
     protected void returnToPreviousMenuOption() {

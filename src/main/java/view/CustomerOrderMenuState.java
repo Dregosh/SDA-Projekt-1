@@ -24,10 +24,10 @@ public class CustomerOrderMenuState extends CustomerMenuState {
                 customerController.returnToPreviousMenu();
                 break;
             case 2:
-                defineCustomerForContext();
+                defineCustomerForContext(REMOVED_NOT_ALLOWED);
                 break;
             case 3:
-                toCustomerBrowserMenuOption();
+                toCustomerBrowserMenuOption(REMOVED_NOT_ALLOWED);
                 break;
             case 0:
                 returnToPreviousMenuOption();

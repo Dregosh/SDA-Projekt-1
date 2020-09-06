@@ -118,6 +118,93 @@ public class CustomerService {
         return customers;
     }
 
+    //==============================
+    //=========To refactor==========
+    //==============================
+
+    public Customer findByIdRemovedIncl(Long id) {
+        Customer customer = null;
+        try {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            Root<Customer> root = criteriaQuery.from(Customer.class);
+            Predicate predicates = criteriaBuilder.equal(root.get("id"), id);
+            criteriaQuery.select(root).where(predicates);
+            try {
+                Query<Customer> query = session.createQuery(criteriaQuery);
+                customer = query.getSingleResult();
+            } catch (NoResultException e) {
+                return null;
+            }
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        }
+        return customer;
+    }
+
+    public List<Customer> findByFullNameRemovedIncl(String lastName, String firstName) {
+        List<Customer> customers = new ArrayList<>();
+        try {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            Root<Customer> root = criteriaQuery.from(Customer.class);
+            Predicate[] predicates = new Predicate[2];
+            predicates[0] = criteriaBuilder.like(root.get("lastName"), "%" + lastName + "%");
+            predicates[1] = criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%");
+            criteriaQuery.select(root).where(predicates);
+            Query<Customer> query = session.createQuery(criteriaQuery);
+            customers = query.getResultList();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        }
+        return customers;
+    }
+
+    public Customer findByAllButIdRemovedIncl(Customer customer) {
+        Customer result = null;
+        try {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            Root<Customer> root = criteriaQuery.from(Customer.class);
+            Predicate[] predicates = new Predicate[5];
+            predicates[0] = criteriaBuilder.equal(root.get("lastName"), customer.getLastName());
+            predicates[1] = criteriaBuilder.equal(root.get("firstName"), customer.getFirstName());
+            predicates[2] = criteriaBuilder.equal(root.get("addressStreet"), customer.getAddressStreet());
+            predicates[3] = criteriaBuilder.equal(root.get("addressPostalCode"), customer.getAddressPostalCode());
+            predicates[4] = criteriaBuilder.equal(root.get("addressCity"), customer.getAddressCity());
+            criteriaQuery.select(root).where(predicates);
+            try {
+                Query<Customer> query = session.createQuery(criteriaQuery);
+                result = query.getSingleResult();
+            } catch (NoResultException e) {
+                return null;
+            }
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public List<Customer> findAllCustomersRemovedIncl() {
+        List<Customer> customers = new ArrayList<>();
+        try {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            Root<Customer> root = criteriaQuery.from(Customer.class);
+            criteriaQuery.select(root).
+                    orderBy(criteriaBuilder.asc(root.get("lastName")));
+            Query<Customer> query = session.createQuery(criteriaQuery);
+            customers = query.getResultList();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        }
+        return customers;
+    }
+
+    //==============================
+    //==============================
+    //==============================
+
     public void update(Customer customer) {
         Transaction transaction = null;
         try {

@@ -1,5 +1,6 @@
 package controller;
 
+import model.Customer;
 import model.Order;
 import model.OrderItem;
 import service.OrderService;
@@ -33,6 +34,10 @@ public class OrderController {
 
     public List<Order> findAllOrders() {
         return orderService.findAllOrders();
+    }
+
+    public List<Order> findByCustomer(Customer customer) {
+        return orderService.findByCustomer(customer);
     }
 
     public void toOrderItemMenu(Order order) {

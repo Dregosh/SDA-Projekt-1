@@ -3,14 +3,18 @@ package view;
 import controller.CustomerController;
 import model.Customer;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class CustomerBrowserMenuState extends CustomerMenuState {
 
+    private boolean allowRemoved;
 
-    public CustomerBrowserMenuState(CustomerController customerController) {
+    public CustomerBrowserMenuState(CustomerController customerController, boolean allowRemoved) {
         super(customerController);
+        this.allowRemoved = allowRemoved;
     }
 
     @Override
@@ -44,7 +48,7 @@ public class CustomerBrowserMenuState extends CustomerMenuState {
         System.out.println("Enter ID of the customer");
         System.out.print("> ");
         int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
-        Customer customer = customerController.findCustomerById(input);
+        Customer customer = customerController.findCustomerById(input, allowRemoved);
         if (Objects.isNull(customer)) {
             System.out.println("Customer not found.");
         } else {
@@ -60,12 +64,12 @@ public class CustomerBrowserMenuState extends CustomerMenuState {
         System.out.println("Enter first name or leave blank");
         System.out.print("> ");
         String firstName = in.nextLine();
-        List<Customer> customers = customerController.findCustomerByFullName(lastName, firstName);
+        List<Customer> customers = customerController.findCustomerByFullName(lastName, firstName, allowRemoved);
         showFormattedCustomers(customers);
     }
 
     private void showAllCustomersOption() {
-        List<Customer> customers = customerController.findAllCustomers();
+        List<Customer> customers = customerController.findAllCustomers(allowRemoved);
         showFormattedCustomers(customers);
     }
 }
