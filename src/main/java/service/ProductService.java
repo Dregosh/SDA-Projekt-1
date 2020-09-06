@@ -1,6 +1,5 @@
 package service;
 
-import model.Customer;
 import model.Product;
 import model.ProductType;
 import org.hibernate.HibernateException;

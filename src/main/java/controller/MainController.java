@@ -1,13 +1,7 @@
 package controller;
 
-import service.CustomerService;
-import service.ProductService;
 import util.HibernateUtil;
-import view.CustomerMenuState;
-import view.MainMenuState;
-import view.MenuState;
-import view.OrderMenuState;
-import view.ProductMenuState;
+import view.*;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

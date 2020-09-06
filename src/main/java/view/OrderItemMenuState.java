@@ -97,11 +97,13 @@ public class OrderItemMenuState extends OrderMenuState {
         showFormattedOrderItem(chosenItem);
         Product product =
                 productController.findProductById(chosenItem.getProduct().getId());
-        int previousAmountOnOrder = chosenItem.getSalesAmount();
+        int previousAmountOnOrderWithDelta =
+                chosenItem.getSalesAmount() +
+                orderController.getModelDeltaMap().get(product.getId());
         int salesAmount = defineOrderItemSalesAmount(
-                product, previousAmountOnOrder, BLANK_INPUT_NOT_ALLOWED);
+                product, previousAmountOnOrderWithDelta, BLANK_INPUT_NOT_ALLOWED);
         orderController.getModelDeltaMap().put(
-                product.getId(), previousAmountOnOrder - salesAmount);
+                product.getId(), previousAmountOnOrderWithDelta - salesAmount);
         chosenItem.setSalesAmount(salesAmount);
         chosenItem.setDiscountPercent(defineOrderItemSalesDiscount(
                 product, DISCOUNT_THRESHOLD, BLANK_INPUT_NOT_ALLOWED));
@@ -124,7 +126,8 @@ public class OrderItemMenuState extends OrderMenuState {
         int index = input - 1;
         Long productId = orderForContext.getOrderItems().get(index).getProduct().getId();
         Integer delta = orderForContext.getOrderItems().get(index).getSalesAmount();
-        orderController.getModelDeltaMap().put(productId, delta);
+        int previousDeltaInMap = orderController.getModelDeltaMap().get(productId);
+        orderController.getModelDeltaMap().put(productId, previousDeltaInMap + delta);
         orderForContext.getOrderItems().remove(index);
     }
 
