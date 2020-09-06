@@ -29,9 +29,16 @@ public class Product {
     @NotNull
     private Integer amount;
 
-    //fetch = FetchType.EAGER,
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product")
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    @PreRemove
+    public void checkOrderItemAssociationBeforeRemoval() {
+        if (!this.orderItems.isEmpty()) {
+            throw new RuntimeException("Cannot remove a product that is included in" +
+                                       " OrderItem(s)");
+        }
+    }
 
     public Product() {
     }

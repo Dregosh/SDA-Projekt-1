@@ -36,10 +36,15 @@ public class ProductService {
             transaction = session.beginTransaction();
             session.delete(product);
             transaction.commit();
-        } catch (EntityNotFoundException e) {
-            System.out.println("This product CANNOT BE REMOVED because it is included " +
-                               "in existing Order Item(s)");
+        } catch (RuntimeException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.out.println(e.getMessage());
         } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
             e.printStackTrace();
         }
     }
