@@ -18,10 +18,6 @@ class CustomerMenuStateTest {
     private static final boolean BLANK_INPUT_NOT_ALLOWED = false;
 
     @Test
-    void addNewCustomerOption() {
-    }
-
-    @Test
     void shouldAssignValuesToCustomerFields() throws IOException {
         //given
         System.setIn(Files.newInputStream(
@@ -37,6 +33,19 @@ class CustomerMenuStateTest {
         assertEquals("sampleCode", customer.getAddressPostalCode());
         assertEquals("sampleCity", customer.getAddressCity());
         Assertions.assertThat(customer.getOrders()).hasSize(0);
+    }
+
+    @Test
+    void shouldReturnNullCustomer() {
+        //given
+        String input = "0\n";
+        mockInput = new ByteArrayInputStream(input.getBytes());
+        System.setIn(mockInput);
+        customerMenuState = new CustomerMenuState(null);
+        //when
+        Customer result = customerMenuState.addNewCustomerOption();
+        //then
+        Assertions.assertThat(result).isNull();
     }
 
     @Test
