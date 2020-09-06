@@ -49,7 +49,7 @@ public abstract class MenuState {
         }
     }
 
-    protected LocalDate requestDateInput(boolean allowBlank) {
+    public LocalDate requestDateInput(boolean allowBlank) {
         while (true) {
             try {
                 String rawInput = in.nextLine();
@@ -88,14 +88,14 @@ public abstract class MenuState {
         System.out.println();
     }
 
-    protected <E extends  Enum<E>> boolean verifyInputInRangeOfEnumTypes(
+    public <E extends  Enum<E>> boolean verifyInputInRangeOfEnumTypes(
             Class<E> enumClass, boolean allowZero, int number) {
         int rangeMin = allowZero ? 0 : 1;
         int rangeMax = enumClass.getEnumConstants().length;
         return (number >= rangeMin && number <= rangeMax);
     }
 
-    protected <T> boolean validateObjectFieldsNonNull(T object, int nullsThreshold) {
+    public <T> boolean validateObjectFieldsNonNull(T object, int nullsThreshold) {
         List<String> nullFields = new LinkedList<>();
         for (Field f : object.getClass().getDeclaredFields()) {
             f.setAccessible(true);
@@ -222,10 +222,6 @@ public abstract class MenuState {
     }
 
     private void separatorLine(String string) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 1; i < string.length(); i++) {
-            stringBuilder.append("=");
-        }
-        System.out.println(stringBuilder.toString());
+        System.out.println("=".repeat(Math.max(0, string.length() - 1)));
     }
 }

@@ -3,11 +3,13 @@ package view;
 import controller.CustomerController;
 import controller.OrderController;
 import controller.ProductController;
-import model.*;
+import model.Customer;
+import model.Order;
+import model.OrderItem;
+import model.OrderStatus;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class OrderMenuState extends MenuState {
@@ -98,7 +100,7 @@ public class OrderMenuState extends MenuState {
         return order;
     }
 
-    private void setOrderFields(Order order) {
+    public void setOrderFields(Order order) {
         int input;
         do {
             System.out.println("\nChoose attribute:");
@@ -151,7 +153,7 @@ public class OrderMenuState extends MenuState {
         } while (input != 0);
     }
 
-    private LocalDate defineDate() {
+    public LocalDate defineDate() {
         System.out.print("enter the date in format 'yyyy-mm-dd': ");
         return requestDateInput(BLANK_INPUT_ALLOWED);
     }
