@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "customers")
-@EntityListeners({CustomerListener.class})
+//@EntityListeners({CustomerListener.class})
 public class Customer {
 
     @Id
@@ -36,10 +36,11 @@ public class Customer {
     @NotNull
     private String addressCity;
 
-    //fetch = FetchType.EAGER,
-    //, cascade = CascadeType.ALL
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
+
+    @Column(name = "removed")
+    private boolean isRemoved;
 
     public Customer() {
     }
@@ -52,6 +53,7 @@ public class Customer {
         this.setAddressStreet(street);
         this.setAddressPostalCode(code);
         this.setAddressCity(city);
+        this.setRemoved(false);
     }
 
     public Long getId() {
@@ -102,6 +104,13 @@ public class Customer {
         this.addressCity = addressCity;
     }
 
+    public boolean isRemoved() {
+        return isRemoved;
+    }
+
+    public void setRemoved(boolean removed) {
+        isRemoved = removed;
+    }
 
     public List<Order> getOrders() {
         return orders;

@@ -40,7 +40,10 @@ public class CustomerService {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
-            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("id"), id));
+            Predicate[] predicates = new Predicate[2];
+            predicates[0] = criteriaBuilder.isFalse(root.get("isRemoved"));
+            predicates[1] = criteriaBuilder.equal(root.get("id"), id);
+            criteriaQuery.select(root).where(predicates);
             try {
                 Query<Customer> query = session.createQuery(criteriaQuery);
                 customer = query.getSingleResult();
@@ -59,9 +62,10 @@ public class CustomerService {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
-            Predicate[] predicates = new Predicate[2];
-            predicates[0] = criteriaBuilder.like(root.get("lastName"), "%" + lastName + "%");
-            predicates[1] = criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%");
+            Predicate[] predicates = new Predicate[3];
+            predicates[0] = criteriaBuilder.isFalse(root.get("isRemoved"));
+            predicates[1] = criteriaBuilder.like(root.get("lastName"), "%" + lastName + "%");
+            predicates[2] = criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%");
             criteriaQuery.select(root).where(predicates);
             Query<Customer> query = session.createQuery(criteriaQuery);
             customers = query.getResultList();
@@ -77,12 +81,13 @@ public class CustomerService {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
-            Predicate[] predicates = new Predicate[5];
-            predicates[0] = criteriaBuilder.equal(root.get("lastName"), customer.getLastName());
-            predicates[1] = criteriaBuilder.equal(root.get("firstName"), customer.getFirstName());
-            predicates[2] = criteriaBuilder.equal(root.get("addressStreet"), customer.getAddressStreet());
-            predicates[3] = criteriaBuilder.equal(root.get("addressPostalCode"), customer.getAddressPostalCode());
-            predicates[4] = criteriaBuilder.equal(root.get("addressCity"), customer.getAddressCity());
+            Predicate[] predicates = new Predicate[6];
+            predicates[0] = criteriaBuilder.isFalse(root.get("isRemoved"));
+            predicates[1] = criteriaBuilder.equal(root.get("lastName"), customer.getLastName());
+            predicates[2] = criteriaBuilder.equal(root.get("firstName"), customer.getFirstName());
+            predicates[3] = criteriaBuilder.equal(root.get("addressStreet"), customer.getAddressStreet());
+            predicates[4] = criteriaBuilder.equal(root.get("addressPostalCode"), customer.getAddressPostalCode());
+            predicates[5] = criteriaBuilder.equal(root.get("addressCity"), customer.getAddressCity());
             criteriaQuery.select(root).where(predicates);
             try {
                 Query<Customer> query = session.createQuery(criteriaQuery);
@@ -102,7 +107,9 @@ public class CustomerService {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
-            criteriaQuery.orderBy(criteriaBuilder.asc(root.get("lastName")));
+            criteriaQuery.select(root).
+                    where(criteriaBuilder.isFalse(root.get("isRemoved"))).
+                    orderBy(criteriaBuilder.asc(root.get("lastName")));
             Query<Customer> query = session.createQuery(criteriaQuery);
             customers = query.getResultList();
         } catch (HibernateException e) {
@@ -144,9 +151,10 @@ public class CustomerService {
 
     public void delete(Customer customer) {
         Transaction transaction = null;
+        customer = anonymizeFields(customer);
         try {
             transaction = session.beginTransaction();
-            session.delete(customer);
+            session.update(customer);
             transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
@@ -156,16 +164,27 @@ public class CustomerService {
         }
     }
 
-    private void addDummyCustomer(Customer customer) {
-        add(customer);
-    }
-
     public void checkForDummyCustomer() {
         Customer dummyCustomer = new Customer("<deleted>", "<deleted>", "<deleted>", "<deleted>", "<deleted>");
         if(Objects.isNull(findByAllButId(dummyCustomer))) {
             addDummyCustomer(dummyCustomer);
         }
 
+    }
+
+    private void addDummyCustomer(Customer customer) {
+        add(customer);
+    }
+
+    private Customer anonymizeFields(Customer customer) {
+        String anonymized = "*****";
+        customer.setLastName(anonymized);
+        customer.setFirstName(anonymized);
+        customer.setAddressStreet(anonymized);
+        customer.setAddressPostalCode(anonymized);
+        customer.setAddressCity(anonymized);
+        customer.setRemoved(true);
+        return customer;
     }
 
     public void initialCustomers() {
