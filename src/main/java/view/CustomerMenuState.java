@@ -45,7 +45,7 @@ public class CustomerMenuState extends MenuState {
         }
     }
 
-    protected Customer addNewCustomerOption() {
+    public Customer addNewCustomerOption() {
         Customer customer = new Customer();
         setCustomerFields(customer);
         if (validateObjectFieldsNonNull(customer, 2)) {
@@ -111,7 +111,7 @@ public class CustomerMenuState extends MenuState {
         customerController.toCustomerBrowserMenu();
     }
 
-    private Customer setCustomerFields(Customer customer) {
+    public Customer setCustomerFields(Customer customer) {
         int input;
         Customer modifiedCustomer = customer;
         do {
@@ -208,8 +208,8 @@ public class CustomerMenuState extends MenuState {
         } while (input != 0);
     }
 
-    private String defineAttribute(boolean allowBlank, String attributeName) {
-        String input = "";
+    public String defineAttribute(boolean allowBlank, String attributeName) {
+        String input;
         while (true) {
             System.out.println("Input " + attributeName + " or 0 to return");
             System.out.print("> ");

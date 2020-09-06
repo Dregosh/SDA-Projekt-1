@@ -21,7 +21,6 @@ public class OrderItemMenuState extends OrderMenuState {
 
     @Override
     public void show() {
-        //System.out.println(orderController.getModelDeltaMap());
         System.out.println("\nORDER ITEMS");
         showNumberedOrderItemsList();
         System.out.println("OPTIONS: ");
@@ -106,8 +105,8 @@ public class OrderItemMenuState extends OrderMenuState {
         chosenItem.setSalesAmount(salesAmount);
         chosenItem.setDiscountPercent(defineOrderItemSalesDiscount(
                 product, DISCOUNT_THRESHOLD, BLANK_INPUT_NOT_ALLOWED));
-        double salesPrice = product.getPrice() *
-                            ((double) (100 - chosenItem.getDiscountPercent()) / 100);
+        double salesPrice = calculateDiscountedPrice(
+                product.getPrice(), chosenItem.getDiscountPercent());
         System.out.printf("SALES PRICE: %.2f\n", salesPrice);
         chosenItem.setSalesPrice(salesPrice);
         orderForContext.getOrderItems().remove(index);
@@ -168,6 +167,10 @@ public class OrderItemMenuState extends OrderMenuState {
             }
         } while (!legitInput);
         return salesDiscount;
+    }
+
+    public double calculateDiscountedPrice(double rootPrice, int discountPercent) {
+        return rootPrice * ((double) (100 - discountPercent) / 100);
     }
 
     private void showNumberedOrderItemsList() {
