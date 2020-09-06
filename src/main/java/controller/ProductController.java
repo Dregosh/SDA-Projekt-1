@@ -76,4 +76,8 @@ public class ProductController {
     public void setModelProduct(Product modelProduct) {
         this.modelProduct = modelProduct;
     }
+
+    public ProductService getProductService() {
+        return productService;
+    }
 }

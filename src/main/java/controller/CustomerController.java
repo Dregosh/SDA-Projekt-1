@@ -81,4 +81,8 @@ public class CustomerController {
     public void returnToPreviousMenu() {
         states.pop();
     }
+
+    public CustomerService getCustomerService() {
+        return customerService;
+    }
 }

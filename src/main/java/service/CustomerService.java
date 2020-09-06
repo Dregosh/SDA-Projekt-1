@@ -156,6 +156,18 @@ public class CustomerService {
         }
     }
 
+    private void addDummyCustomer(Customer customer) {
+        add(customer);
+    }
+
+    public void checkForDummyCustomer() {
+        Customer dummyCustomer = new Customer("<deleted>", "<deleted>", "<deleted>", "<deleted>", "<deleted>");
+        if(Objects.isNull(findByAllButId(dummyCustomer))) {
+            addDummyCustomer(dummyCustomer);
+        }
+
+    }
+
     public void initialCustomers() {
         List<Customer> customers = List.of(
                 new Customer("Kowalski", "Jan", "Al. Ujazdowskie", "00-500", "Warszawa"),

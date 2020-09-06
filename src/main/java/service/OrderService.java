@@ -1,10 +1,12 @@
 package service;
 
+import model.Customer;
 import model.Order;
 import model.OrderItem;
 import model.Product;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import util.HibernateUtil;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -50,6 +52,20 @@ public class OrderService {
             Root<Order> root = query.from(Order.class);
             query.select(root);
             orders = session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
+    public List<Order> findByCustomer(Customer customer) {
+        List<Order> orders = new ArrayList<>();
+        try {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
+            Root<Order> root = criteriaQuery.from(Order.class);
+            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("customer"), customer));
+            orders = session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
             e.printStackTrace();
         }
