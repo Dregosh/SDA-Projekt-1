@@ -40,14 +40,14 @@ public class CustomerController {
         customerService.delete(customer);
     }
 
-    public void toCustomerBrowserMenu() {
-        states.push(new CustomerBrowserMenuState(this));
+    public void toCustomerBrowserMenu(boolean allowRemoved) {
+        states.push(new CustomerBrowserMenuState(this, allowRemoved));
     }
 
-    public void toCustomerSelectionMenu() {
+    public void toCustomerSelectionMenu(boolean allowRemoved) {
         modelCustomer = null;
         int loopMarker = states.size();
-        states.push(new CustomerSelectionMenuState(this));
+        states.push(new CustomerSelectionMenuState(this, allowRemoved));
         while (loopMarker < states.size()) {
             states.getFirst().show();
         }
@@ -62,20 +62,32 @@ public class CustomerController {
         }
     }
 
-    public Customer findCustomerById(long id) {
-        return customerService.findById(id);
+    public Customer findCustomerById(long id, boolean allowRemoved) {
+        if (allowRemoved) {
+            return customerService.findByIdRemovedIncl(id);
+        } else {
+            return customerService.findById(id);
+        }
     }
 
     public Customer findCustomerByAllButId(Customer customer) {
         return customerService.findByAllButId(customer);
     }
 
-    public List<Customer> findCustomerByFullName(String lastName, String firstName) {
-        return customerService.findByFullName(lastName, firstName);
+    public List<Customer> findCustomerByFullName(String lastName, String firstName, boolean allowRemoved) {
+        if (allowRemoved) {
+            return customerService.findByFullNameRemovedIncl(lastName, firstName);
+        }else {
+            return customerService.findByFullName(lastName, firstName);
+        }
     }
 
-    public List<Customer> findAllCustomers() {
-        return customerService.findAllCustomers();
+    public List<Customer> findAllCustomers(boolean allowRemoved) {
+        if (allowRemoved) {
+            return customerService.findAllCustomersRemovedIncl();
+        } else {
+            return customerService.findAllCustomers();
+        }
     }
 
     public void returnToPreviousMenu() {

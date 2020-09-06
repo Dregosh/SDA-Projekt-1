@@ -7,8 +7,11 @@ import java.util.Objects;
 
 public class CustomerSelectionMenuState extends CustomerMenuState {
 
-    public CustomerSelectionMenuState(CustomerController customerController) {
+    private boolean allowRemoved;
+
+    public CustomerSelectionMenuState(CustomerController customerController, boolean allowRemoved) {
         super(customerController);
+        this.allowRemoved = allowRemoved;
     }
 
     @Override
@@ -21,10 +24,10 @@ public class CustomerSelectionMenuState extends CustomerMenuState {
         int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
         switch (input) {
             case 1:
-                defineCustomerForContext();
+                defineCustomerForContext(allowRemoved);
                 break;
             case 2:
-                toCustomerBrowserMenuOption();
+                toCustomerBrowserMenuOption(allowRemoved);
                 break;
             case 0:
                 returnToPreviousMenuOption();

@@ -19,7 +19,7 @@ public class ProductMenuState extends MenuState {
         System.out.println("(1) Product Browser Menu...");
         System.out.println("(2) Add new product to DataBase");
         System.out.println("(3) Update existing product in DataBase");
-        System.out.println("(4) Remove product from DataBase");
+//        System.out.println("(4) Remove product from DataBase");
         System.out.println("(0) Return to previous menu");
         System.out.print("> ");
         int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
@@ -33,9 +33,9 @@ public class ProductMenuState extends MenuState {
             case 3:
                 updateExistingProductOption();
                 break;
-            case 4:
-                removeProductOption();
-                break;
+//            case 4:
+//                removeProductOption();
+//                break;
             case 0:
                 returnToPreviousMenuOption();
                 break;

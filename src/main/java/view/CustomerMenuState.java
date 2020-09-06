@@ -26,7 +26,7 @@ public class CustomerMenuState extends MenuState {
         int input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
         switch (input) {
             case 1:
-                toCustomerBrowserMenuOption();
+                toCustomerBrowserMenuOption(REMOVED_NOT_ALLOWED);
                 break;
             case 2:
                 addNewCustomerOption();
@@ -71,7 +71,7 @@ public class CustomerMenuState extends MenuState {
     }
 
     private void updateExistingCustomerOption() {
-        customerController.toCustomerSelectionMenu();
+        customerController.toCustomerSelectionMenu(REMOVED_NOT_ALLOWED);
         Customer customer = customerController.getModelCustomer();
         if (Objects.isNull(customer)) {
             reportOperationCancelled();
@@ -91,7 +91,7 @@ public class CustomerMenuState extends MenuState {
     }
 
     private void removeCustomerOption() {
-        customerController.toCustomerSelectionMenu();
+        customerController.toCustomerSelectionMenu(REMOVED_NOT_ALLOWED);
         Customer customer = customerController.getModelCustomer();
         if (Objects.isNull(customer)) {
             reportOperationCancelled();
@@ -107,8 +107,8 @@ public class CustomerMenuState extends MenuState {
         }
     }
 
-    protected void toCustomerBrowserMenuOption() {
-        customerController.toCustomerBrowserMenu();
+    protected void toCustomerBrowserMenuOption(boolean allowRemoved) {
+        customerController.toCustomerBrowserMenu(allowRemoved);
     }
 
     public Customer setCustomerFields(Customer customer) {
@@ -185,14 +185,14 @@ public class CustomerMenuState extends MenuState {
         return modifiedCustomer;
     }
 
-    protected void defineCustomerForContext() {
+    protected void defineCustomerForContext(boolean allowRemoved) {
         int input;
         do {
             System.out.println("Enter ID of the customer or 0 to cancel");
             System.out.print("> ");
             input = (int) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
             if (input != 0) {
-                Customer customer = customerController.findCustomerById(input);
+                Customer customer = customerController.findCustomerById(input, allowRemoved);
                 if (Objects.isNull(customer)) {
                     System.out.println("Customer not found.");
                 } else {
