@@ -1,12 +1,14 @@
 package model;
 
 import com.sun.istack.NotNull;
+import listener.CustomerListener;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "customers")
+@EntityListeners({CustomerListener.class})
 public class Customer {
 
     @Id
@@ -35,7 +37,8 @@ public class Customer {
     private String addressCity;
 
     //fetch = FetchType.EAGER,
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    //, cascade = CascadeType.ALL
+    @OneToMany(mappedBy = "customer")
     private List<Order> orders = new ArrayList<>();
 
     public Customer() {

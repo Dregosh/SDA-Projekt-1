@@ -1,5 +1,7 @@
 package controller;
 
+import service.CustomerService;
+import service.ProductService;
 import util.HibernateUtil;
 import view.CustomerMenuState;
 import view.MainMenuState;
@@ -24,6 +26,8 @@ public class MainController {
     }
 
     public void start() {
+        customerController.getCustomerService().checkForDummyCustomer();
+        //initializeDB();
         states.push(new MainMenuState(this));
         while (!states.isEmpty()) {
             states.getFirst().show();
@@ -45,5 +49,10 @@ public class MainController {
     public void exitProgram() {
         states.pop();
         HibernateUtil.closeSession();
+    }
+
+    private void initializeDB() {
+        productController.getProductService().addInitialProductsToDB();
+        customerController.getCustomerService().initialCustomers();
     }
 }
