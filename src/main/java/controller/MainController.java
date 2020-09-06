@@ -26,7 +26,6 @@ public class MainController {
     }
 
     public void start() {
-        customerController.getCustomerService().checkForDummyCustomer();
         //initializeDB();
         states.push(new MainMenuState(this));
         while (!states.isEmpty()) {
