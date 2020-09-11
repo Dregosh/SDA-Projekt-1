@@ -1,5 +1,7 @@
 package service;
 
+import dao.ProductDao;
+import dao.ProductDaoImpl;
 import model.Product;
 import model.ProductType;
 import org.hibernate.HibernateException;
@@ -17,9 +19,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductService {
-    private Transaction transaction = null;
+    private final ProductDao productDao = new ProductDaoImpl();
 
-    public void saveProduct(Product product) {
+    public void save(Product product) {
+        productDao.save(product);
+    }
+
+    public void update(Product product) {
+        productDao.update(product);
+    }
+
+    public void delete(Long id) {
+        productDao.delete(id, Product.class);
+    }
+
+    public Product findById(Long id) {
+        return productDao.findById(id, Product.class);
+    }
+
+    public List<Product> findByNameFragment(String nameFragment) {
+        return productDao.findByNameFragment(nameFragment);
+    }
+
+    public List<Product> findByType(ProductType type) {
+        return productDao.findByType(type);
+    }
+
+    public Product findByNameAndType(Product product) {
+        return productDao.findByNameAndType(product);
+    }
+
+    public List<Product> findAllSortedByTypeAndName() {
+        return productDao.findAllSortedByTypeAndName();
+    }
+
+    /*public void save(Product product) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.save(product);
@@ -27,9 +61,9 @@ public class ProductService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-    public void updateProduct(Product product) {
+    /*public void update(Product product) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.update(product);
@@ -37,9 +71,9 @@ public class ProductService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-    public void deleteProduct(Long id) {
+    /*public void delete(Long id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             Product product = session.find(Product.class, id);
@@ -50,9 +84,9 @@ public class ProductService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-    public Product findProductById(Long id) {
+    /*public Product findById(Long id) {
         Product product = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             product = session.find(Product.class, id);
@@ -60,9 +94,9 @@ public class ProductService {
             e.printStackTrace();
         }
         return product;
-    }
+    }*/
 
-    public List<Product> findProductsByNameFragment(String nameFragment) {
+    /*public List<Product> findByNameFragment(String nameFragment) {
         List<Product> products = new ArrayList<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -75,9 +109,9 @@ public class ProductService {
             e.printStackTrace();
         }
         return products;
-    }
+    }*/
 
-    public List<Product> findProductsByType(ProductType type) {
+    /*public List<Product> findByType(ProductType type) {
         List<Product> products = new ArrayList<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -90,9 +124,9 @@ public class ProductService {
             e.printStackTrace();
         }
         return products;
-    }
+    }*/
 
-    public Product findProductByNameAndType(Product product) {
+    /*public Product findByNameAndType(Product product) {
         Product result = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -113,9 +147,9 @@ public class ProductService {
             e.printStackTrace();
         }
         return result;
-    }
+    }*/
 
-    public List<Product> findAllProducts() {
+    /*public List<Product> findAllSortedByTypeAndName() {
         List<Product> products = new ArrayList<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -127,7 +161,7 @@ public class ProductService {
             e.printStackTrace();
         }
         return products;
-    }
+    }*/
 
     public void addInitialProductsToDB() {
         List<Product> products = List.of(
@@ -145,7 +179,7 @@ public class ProductService {
                 new Product("Xbox One Controller", ProductType.ACCESSORY, 125.00, 2)
         );
         for (Product p : products) {
-            saveProduct(p);
+            save(p);
         }
     }
 }

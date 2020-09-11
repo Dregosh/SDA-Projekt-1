@@ -21,15 +21,15 @@ public class ProductController {
     }
 
     public void addNewProductToDB(Product product) {
-        productService.saveProduct(product);
+        productService.save(product);
     }
 
     public void updateProductInDB(Product product) {
-        productService.updateProduct(product);
+        productService.update(product);
     }
 
     public void removeProductFromDB(Product product) {
-        productService.deleteProduct(product.getId());
+        productService.delete(product.getId());
     }
 
     public void toProductBrowserMenu() {
@@ -46,23 +46,23 @@ public class ProductController {
     }
 
     public Product findProductById(long id) {
-        return productService.findProductById(id);
+        return productService.findById(id);
     }
 
     public List<Product> findProductsByName(String nameFragment) {
-        return productService.findProductsByNameFragment(nameFragment);
+        return productService.findByNameFragment(nameFragment);
     }
 
     public List<Product> findProductsByType(ProductType type) {
-        return productService.findProductsByType(type);
+        return productService.findByType(type);
     }
 
     public Product findProductByNameAndType(Product product) {
-        return productService.findProductByNameAndType(product);
+        return productService.findByNameAndType(product);
     }
 
     public List<Product> showAllProducts() {
-        return productService.findAllProducts();
+        return productService.findAllSortedByTypeAndName();
     }
 
     public void returnToPreviousMenu() {

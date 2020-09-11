@@ -20,7 +20,7 @@ public class MainController {
     }
 
     public void start() {
-        //initializeDB();
+        initializeDB();
         states.push(new MainMenuState(this));
         while (!states.isEmpty()) {
             states.getFirst().show();
