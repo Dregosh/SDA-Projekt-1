@@ -25,6 +25,7 @@ public class MainController {
         while (!states.isEmpty()) {
             states.getFirst().show();
         }
+        HibernateUtil.shutdown();
     }
 
     public void toProductMenu() {
@@ -41,7 +42,6 @@ public class MainController {
 
     public void exitProgram() {
         states.pop();
-        HibernateUtil.closeSession();
     }
 
     private void initializeDB() {

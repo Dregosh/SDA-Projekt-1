@@ -2,14 +2,11 @@ package controller;
 
 import model.Customer;
 import model.Order;
-import model.OrderItem;
 import service.OrderService;
 import view.MenuState;
 import view.OrderItemMenuState;
-import view.ProductSelectionMenuState;
 
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,19 +22,19 @@ public class OrderController {
     }
 
     public void addOrUpdateOrderInDB(Order order) {
-        orderService.addOrUpdateOrder(order, modelDeltaMap);
+        orderService.saveOrUpdateOrder(order, modelDeltaMap);
     }
 
-    public Order findOrderById(long id) {
-        return orderService.findOrderById(id);
+    public Order findOrderByIdWithOrderItems(long id) {
+        return orderService.findOrderByIdWithOrderItems(id);
     }
 
-    public List<Order> findAllOrders() {
-        return orderService.findAllOrders();
+    public List<Order> findAllOrdersWithOrderItems() {
+        return orderService.findAllOrdersWithOrderItems();
     }
 
-    public List<Order> findByCustomer(Customer customer) {
-        return orderService.findByCustomer(customer);
+    public List<Order> findByCustomerWithOrderItems(Customer customer) {
+        return orderService.findByCustomerWithOrderItems(customer);
     }
 
     public void toOrderItemMenu(Order order) {

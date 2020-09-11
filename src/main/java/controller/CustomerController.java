@@ -29,7 +29,7 @@ public class CustomerController {
     }
 
     public void addNewCustomer(Customer customer){
-        customerService.add(customer);
+        customerService.save(customer);
     }
 
     public void updateExistingCustomer(Customer customer) {

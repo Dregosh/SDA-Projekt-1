@@ -8,7 +8,6 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import util.HibernateUtil;
 
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -19,10 +18,9 @@ import java.util.List;
 
 public class ProductService {
     private Transaction transaction = null;
-    private Session session = HibernateUtil.getSession();
 
-    public void addProduct(Product product) {
-        try {
+    public void saveProduct(Product product) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.save(product);
             transaction.commit();
@@ -31,26 +29,8 @@ public class ProductService {
         }
     }
 
-    public void removeProduct(Product product) {
-        try {
-            transaction = session.beginTransaction();
-            session.delete(product);
-            transaction.commit();
-        } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            System.out.println(e.getMessage());
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        }
-    }
-
     public void updateProduct(Product product) {
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.update(product);
             transaction.commit();
@@ -59,10 +39,23 @@ public class ProductService {
         }
     }
 
+    public void deleteProduct(Long id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            Product product = session.find(Product.class, id);
+            session.delete(product);
+            transaction.commit();
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public Product findProductById(Long id) {
         Product product = null;
-        try {
-            product = session.get(Product.class, id);
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            product = session.find(Product.class, id);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,7 +64,7 @@ public class ProductService {
 
     public List<Product> findProductsByNameFragment(String nameFragment) {
         List<Product> products = new ArrayList<>();
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Product> query = builder.createQuery(Product.class);
             Root<Product> root = query.from(Product.class);
@@ -86,7 +79,7 @@ public class ProductService {
 
     public List<Product> findProductsByType(ProductType type) {
         List<Product> products = new ArrayList<>();
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Product> query = builder.createQuery(Product.class);
             Root<Product> root = query.from(Product.class);
@@ -101,7 +94,7 @@ public class ProductService {
 
     public Product findProductByNameAndType(Product product) {
         Product result = null;
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Product> criteriaQuery =
                     criteriaBuilder.createQuery(Product.class);
@@ -124,7 +117,7 @@ public class ProductService {
 
     public List<Product> findAllProducts() {
         List<Product> products = new ArrayList<>();
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Product> query = builder.createQuery(Product.class);
             Root<Product> root = query.from(Product.class);
@@ -152,7 +145,7 @@ public class ProductService {
                 new Product("Xbox One Controller", ProductType.ACCESSORY, 125.00, 2)
         );
         for (Product p : products) {
-            addProduct(p);
+            saveProduct(p);
         }
     }
 }

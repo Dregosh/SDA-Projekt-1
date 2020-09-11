@@ -92,9 +92,8 @@ public class OrderMenuState extends MenuState {
     private Order defineOrderForContext() {
         System.out.print("Enter order ID: ");
         long input = (long) requestNumberInput(BLANK_INPUT_NOT_ALLOWED);
-        Order order = orderController.findOrderById(input);
+        Order order = orderController.findOrderByIdWithOrderItems(input);
         if (Objects.isNull(order)) {
-            System.out.println("Order not found");
             reportOperationCancelled();
         }
         return order;
@@ -176,13 +175,13 @@ public class OrderMenuState extends MenuState {
     }
 
     private void showAllOrdersInDBOption() {
-        showFormattedOrders(orderController.findAllOrders());
+        showFormattedOrders(orderController.findAllOrdersWithOrderItems());
     }
 
     private void showOrdersByCustomerOption() {
         customerController.toCustomerSelectionMenu(REMOVED_ALLOWED);
         Customer customer = customerController.getModelCustomer();
-        showFormattedOrders(orderController.findByCustomer(customer));
+        showFormattedOrders(orderController.findByCustomerWithOrderItems(customer));
     }
 
     protected void returnToPreviousMenuOption() {

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CustomerListener {
 
-    @PreRemove
+    /*@PreRemove
     void setToDummyCustomer(Object o) {
         Customer customer = (Customer) o;
         List<Order> orders = customer.getOrders();
@@ -19,5 +19,5 @@ public class CustomerListener {
                 order.setCustomer(dummyCustomer);
             }
         }
-    }
+    }*/
 }

@@ -21,7 +21,7 @@ public class ProductController {
     }
 
     public void addNewProductToDB(Product product) {
-        productService.addProduct(product);
+        productService.saveProduct(product);
     }
 
     public void updateProductInDB(Product product) {
@@ -29,7 +29,7 @@ public class ProductController {
     }
 
     public void removeProductFromDB(Product product) {
-        productService.removeProduct(product);
+        productService.deleteProduct(product.getId());
     }
 
     public void toProductBrowserMenu() {

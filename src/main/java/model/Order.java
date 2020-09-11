@@ -17,9 +17,7 @@ public class Order {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    //fetch = FetchType.EAGER,
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,
-               orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @Column(name = "order_date", nullable = false)
@@ -33,6 +31,20 @@ public class Order {
     private LocalDate paymentDate;
 
     public Order() {
+    }
+
+    public Order(Customer customer, LocalDate orderDate, OrderStatus status,
+                 LocalDate paymentDate) {
+        this();
+        this.setCustomer(customer);
+        this.setOrderDate(orderDate);
+        this.setStatus(status);
+        this.setPaymentDate(paymentDate);
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        this.getOrderItems().add(orderItem);
+        orderItem.setOrder(this);
     }
 
     public Long getId() {

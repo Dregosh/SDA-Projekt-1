@@ -17,28 +17,23 @@ import java.util.List;
 import java.util.Objects;
 
 public class CustomerService {
-    private Session session = HibernateUtil.getSession();
-    private Transaction transaction = null;
 
-    public void add(Customer customer) {
-        transaction = null;
-        try {
-            transaction = session.beginTransaction();
+    public void save(Customer customer) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
             session.save(customer);
             transaction.commit();
-        } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public Customer findById(Long id) {
         Customer customer = null;
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            CriteriaQuery<Customer> criteriaQuery =
+                    criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             Predicate[] predicates = new Predicate[2];
             predicates[0] = criteriaBuilder.isFalse(root.get("isRemoved"));
@@ -58,14 +53,17 @@ public class CustomerService {
 
     public List<Customer> findByFullName(String lastName, String firstName) {
         List<Customer> customers = new ArrayList<>();
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            CriteriaQuery<Customer> criteriaQuery =
+                    criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             Predicate[] predicates = new Predicate[3];
             predicates[0] = criteriaBuilder.isFalse(root.get("isRemoved"));
-            predicates[1] = criteriaBuilder.like(root.get("lastName"), "%" + lastName + "%");
-            predicates[2] = criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%");
+            predicates[1] =
+                    criteriaBuilder.like(root.get("lastName"), "%" + lastName + "%");
+            predicates[2] =
+                    criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%");
             criteriaQuery.select(root).where(predicates);
             Query<Customer> query = session.createQuery(criteriaQuery);
             customers = query.getResultList();
@@ -77,17 +75,23 @@ public class CustomerService {
 
     public Customer findByAllButId(Customer customer) {
         Customer result = null;
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            CriteriaQuery<Customer> criteriaQuery =
+                    criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             Predicate[] predicates = new Predicate[6];
             predicates[0] = criteriaBuilder.isFalse(root.get("isRemoved"));
-            predicates[1] = criteriaBuilder.equal(root.get("lastName"), customer.getLastName());
-            predicates[2] = criteriaBuilder.equal(root.get("firstName"), customer.getFirstName());
-            predicates[3] = criteriaBuilder.equal(root.get("addressStreet"), customer.getAddressStreet());
-            predicates[4] = criteriaBuilder.equal(root.get("addressPostalCode"), customer.getAddressPostalCode());
-            predicates[5] = criteriaBuilder.equal(root.get("addressCity"), customer.getAddressCity());
+            predicates[1] =
+                    criteriaBuilder.equal(root.get("lastName"), customer.getLastName());
+            predicates[2] =
+                    criteriaBuilder.equal(root.get("firstName"), customer.getFirstName());
+            predicates[3] = criteriaBuilder
+                    .equal(root.get("addressStreet"), customer.getAddressStreet());
+            predicates[4] = criteriaBuilder.equal(root.get("addressPostalCode"),
+                                                  customer.getAddressPostalCode());
+            predicates[5] = criteriaBuilder
+                    .equal(root.get("addressCity"), customer.getAddressCity());
             criteriaQuery.select(root).where(predicates);
             try {
                 Query<Customer> query = session.createQuery(criteriaQuery);
@@ -103,13 +107,14 @@ public class CustomerService {
 
     public List<Customer> findAllCustomers() {
         List<Customer> customers = new ArrayList<>();
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            CriteriaQuery<Customer> criteriaQuery =
+                    criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             criteriaQuery.select(root).
                     where(criteriaBuilder.isFalse(root.get("isRemoved"))).
-                    orderBy(criteriaBuilder.asc(root.get("lastName")));
+                                 orderBy(criteriaBuilder.asc(root.get("lastName")));
             Query<Customer> query = session.createQuery(criteriaQuery);
             customers = query.getResultList();
         } catch (HibernateException e) {
@@ -124,9 +129,10 @@ public class CustomerService {
 
     public Customer findByIdRemovedIncl(Long id) {
         Customer customer = null;
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            CriteriaQuery<Customer> criteriaQuery =
+                    criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             Predicate predicates = criteriaBuilder.equal(root.get("id"), id);
             criteriaQuery.select(root).where(predicates);
@@ -144,13 +150,16 @@ public class CustomerService {
 
     public List<Customer> findByFullNameRemovedIncl(String lastName, String firstName) {
         List<Customer> customers = new ArrayList<>();
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            CriteriaQuery<Customer> criteriaQuery =
+                    criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             Predicate[] predicates = new Predicate[2];
-            predicates[0] = criteriaBuilder.like(root.get("lastName"), "%" + lastName + "%");
-            predicates[1] = criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%");
+            predicates[0] =
+                    criteriaBuilder.like(root.get("lastName"), "%" + lastName + "%");
+            predicates[1] =
+                    criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%");
             criteriaQuery.select(root).where(predicates);
             Query<Customer> query = session.createQuery(criteriaQuery);
             customers = query.getResultList();
@@ -162,16 +171,22 @@ public class CustomerService {
 
     public Customer findByAllButIdRemovedIncl(Customer customer) {
         Customer result = null;
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            CriteriaQuery<Customer> criteriaQuery =
+                    criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             Predicate[] predicates = new Predicate[5];
-            predicates[0] = criteriaBuilder.equal(root.get("lastName"), customer.getLastName());
-            predicates[1] = criteriaBuilder.equal(root.get("firstName"), customer.getFirstName());
-            predicates[2] = criteriaBuilder.equal(root.get("addressStreet"), customer.getAddressStreet());
-            predicates[3] = criteriaBuilder.equal(root.get("addressPostalCode"), customer.getAddressPostalCode());
-            predicates[4] = criteriaBuilder.equal(root.get("addressCity"), customer.getAddressCity());
+            predicates[0] =
+                    criteriaBuilder.equal(root.get("lastName"), customer.getLastName());
+            predicates[1] =
+                    criteriaBuilder.equal(root.get("firstName"), customer.getFirstName());
+            predicates[2] = criteriaBuilder
+                    .equal(root.get("addressStreet"), customer.getAddressStreet());
+            predicates[3] = criteriaBuilder.equal(root.get("addressPostalCode"),
+                                                  customer.getAddressPostalCode());
+            predicates[4] = criteriaBuilder
+                    .equal(root.get("addressCity"), customer.getAddressCity());
             criteriaQuery.select(root).where(predicates);
             try {
                 Query<Customer> query = session.createQuery(criteriaQuery);
@@ -187,9 +202,10 @@ public class CustomerService {
 
     public List<Customer> findAllCustomersRemovedIncl() {
         List<Customer> customers = new ArrayList<>();
-        try {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
+            CriteriaQuery<Customer> criteriaQuery =
+                    criteriaBuilder.createQuery(Customer.class);
             Root<Customer> root = criteriaQuery.from(Customer.class);
             criteriaQuery.select(root).
                     orderBy(criteriaBuilder.asc(root.get("lastName")));
@@ -206,61 +222,51 @@ public class CustomerService {
     //==============================
 
     public void update(Customer customer) {
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
             session.update(customer);
             transaction.commit();
         } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
             e.printStackTrace();
         }
     }
 
     public void delete(Long id) {
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
             Customer customer = findById(id);
             if (Objects.nonNull(customer)) {
                 session.delete(customer);
             }
             transaction.commit();
         } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
             e.printStackTrace();
         }
     }
 
     public void delete(Customer customer) {
-        Transaction transaction = null;
         customer = anonymizeFields(customer);
-        try {
-            transaction = session.beginTransaction();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
             session.update(customer);
             transaction.commit();
         } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
             e.printStackTrace();
         }
     }
 
     public void checkForDummyCustomer() {
-        Customer dummyCustomer = new Customer("<deleted>", "<deleted>", "<deleted>", "<deleted>", "<deleted>");
-        if(Objects.isNull(findByAllButId(dummyCustomer))) {
+        Customer dummyCustomer =
+                new Customer("<deleted>", "<deleted>", "<deleted>", "<deleted>",
+                             "<deleted>");
+        if (Objects.isNull(findByAllButId(dummyCustomer))) {
             addDummyCustomer(dummyCustomer);
         }
 
     }
 
     private void addDummyCustomer(Customer customer) {
-        add(customer);
+        save(customer);
     }
 
     private Customer anonymizeFields(Customer customer) {
@@ -283,7 +289,7 @@ public class CustomerService {
                 new Customer("Bilski", "Jakub", "Mazowiecka", "35-544", "Grabowo")
         );
         for (Customer c : customers) {
-            add(c);
+            save(c);
         }
     }
 }

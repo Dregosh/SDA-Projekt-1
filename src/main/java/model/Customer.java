@@ -1,7 +1,6 @@
 package model;
 
 import com.sun.istack.NotNull;
-import listener.CustomerListener;
 
 import javax.persistence.*;
 import java.util.ArrayList;

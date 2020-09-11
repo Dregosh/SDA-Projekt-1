@@ -31,6 +31,13 @@ public class OrderItem {
     public OrderItem() {
     }
 
+    public OrderItem(Product product, Integer salesAmount, Integer discountPercent) {
+        this.product = product;
+        this.salesAmount = salesAmount;
+        this.salesPrice = null;
+        this.discountPercent = discountPercent;
+    }
+
     public Long getId() {
         return id;
     }
